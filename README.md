@@ -1,65 +1,53 @@
 # Your Wardrobe
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-
-## Table of Contents
-
-1. [Project Name](#project-name)
-2. [Project Description](#project-description)
-3. [Tech Stack](#tech-stack)
-4. [Getting Started Locally](#getting-started-locally)
-5. [Available Scripts](#available-scripts)
-6. [Project Scope](#project-scope)
-7. [Project Status](#project-status)
-8. [License](#license)
+> Offline-first wardrobe management app for iOS/Android (Expo + React Native)
 
 ---
 
-## Project Name
+## Table of Contents
 
-Your Wardrobe
+1. [Project Description](#project-description)
+2. [Tech Stack](#tech-stack)
+3. [Getting Started Locally](#getting-started-locally)
+4. [Available Scripts](#available-scripts)
+5. [Project Scope](#project-scope)
+6. [Project Status](#project-status)
+7. [License](#license)
 
 ---
 
 ## Project Description
 
-Your Wardrobe is an offline-first mobile application for iOS and Android that enables users to easily catalog, manage, and organize their wardrobe. Designed with privacy and simplicity in mind, it offers both manual and AI-powered categorization, deduplication, advanced search capabilities, and user-friendly tagging. The goal is to help users reduce wardrobe clutter, avoid unnecessary purchases, and keep private data secure—without requiring a backend in the MVP.
+**Your Wardrobe** is an offline-first mobile app for iOS and Android designed to help users easily catalog, organize, and manage their clothing collection. The app aims to reduce clutter, simplify wardrobe maintenance, and prevent unnecessary purchases, while ensuring maximum data privacy and a seamless offline experience. Users can add clothes by taking multiple photos, assign categories and attributes manually or with AI assistance, and enjoy fast search and filtering, all without requiring a backend.
+
+> **Key goals:**
+>
+> - Effortless wardrobe cataloging and organization
+> - Privacy-first and offline functionality
+> - Reduce overbuying and keep track of existing clothing
+
+For full product requirements and user stories, see [`docs/README.md`](docs/README.md).
 
 ---
 
 ## Tech Stack
 
-**Frontend:**
-
-- [Expo (managed workflow)](https://docs.expo.dev/)
-- [React Native](https://reactnative.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [React Navigation](https://reactnavigation.org/)
-- [React Native Paper](https://callstack.github.io/react-native-paper/)
-- [expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/) for local storage
-- [expo-camera](https://docs.expo.dev/versions/latest/sdk/camera/), [expo-image-manipulator](https://docs.expo.dev/versions/latest/sdk/image-manipulator/), [expo-file-system](https://docs.expo.dev/versions/latest/sdk/filesystem/)
-- [expo-crypto](https://docs.expo.dev/versions/latest/sdk/crypto/) (deduplication)
-- [expo-local-authentication](https://docs.expo.dev/versions/latest/sdk/local-authentication/), [expo-secure-store](https://docs.expo.dev/versions/latest/sdk/securestore/) (biometrics + PIN)
-- [react-i18next](https://react.i18next.com/), [react-native-localize](https://github.com/zoontek/react-native-localize) (i18n, Polish ready, English support planned)
-
-**Backend (MVP):**
-
-- None. All logic and data is offline, stored locally.
-
-**Backend (Post-MVP, optional):**
-
-- [Supabase](https://supabase.com/) (cloud backup/manual sync)
-
-**AI:**
-
-- Category/tag suggestion via LLM (OpenRouter/OpenAI) with switch to disable image uploads (text only by default)
-
-**CI/CD & Hosting:**
-
-- GitHub Actions (linting, typechecking, UI testing)
-- Expo EAS Build & OTA Updates
-- Expo Go for testing
-- (Optional) Sentry, GitHub Pages/Netlify for info/privacy page
+- **Frontend**: [Expo (managed)](https://docs.expo.dev/) + [React Native](https://reactnative.dev/) (TypeScript)
+  - React Navigation (stack/tabs navigation)
+  - [React Native Paper](https://callstack.github.io/react-native-paper/): accessible UI components
+  - [expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/): local database storage (CRUD, migrations)
+  - [expo-camera](https://docs.expo.dev/versions/latest/sdk/camera/), [expo-image-manipulator](https://docs.expo.dev/versions/latest/sdk/image-manipulator/), [expo-file-system](https://docs.expo.dev/versions/latest/sdk/filesystem/): photo capture, compression, thumbnailing, file storage
+  - [expo-crypto](https://docs.expo.dev/versions/latest/sdk/crypto/): deduplication
+  - [expo-secure-store](https://docs.expo.dev/versions/latest/sdk/securestore/), [expo-local-authentication](https://docs.expo.dev/versions/latest/sdk/local-authentication/): biometric & PIN lock
+  - [react-i18next](https://react.i18next.com/) + [react-native-localize](https://github.com/zoontek/react-native-localize): internationalization (PL now, EN-ready)
+- **Backend:** Offline-only in MVP (no remote backend); optional future sync (Supabase)
+  - Export/Import (backup v1): Planned via ZIP with JSON + thumbnails
+- **AI Assistance** (optional): Category/tag suggestions powered by large language models (cloud-based; user opt-in, "do not send images" mode)
+- **DevOps & CI/CD:**
+  - [GitHub Actions](https://github.com/features/actions): linting, typechecking, UI testing ([Jest](https://jestjs.io/), [@testing-library/react-native](https://testing-library.com/docs/react-native-testing-library/intro/))
+  - [Expo EAS Build & Update](https://docs.expo.dev/eas/): cross-platform builds, OTA updates
+  - Optional: Monitoring ([sentry-expo](https://docs.expo.dev/guides/using-sentry/)), public info page via GitHub Pages/Netlify
+- **See:** [`package.json`](package.json) for detailed dependencies.
 
 ---
 
@@ -67,94 +55,97 @@ Your Wardrobe is an offline-first mobile application for iOS and Android that en
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v16+)
-- [Yarn](https://classic.yarnpkg.com/) or [npm](https://www.npmjs.com/)
-- [Expo CLI](https://docs.expo.dev/get-started/installation/) (installed globally):
-  ```bash
-  npm install -g expo-cli
-  ```
-- (Optional) [Git](https://git-scm.com/) for cloning the repository
+- [Node.js](https://nodejs.org/en/download/) (v18 or newer recommended)
+- [npm](https://www.npmjs.com/get-npm) or [yarn](https://classic.yarnpkg.com/en/docs/install/)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) installed globally:  
+  `npm install -g expo-cli`
 
-### Installation
+### Setup Instructions
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/your-org/your-wardrobe.git
    cd your-wardrobe
    ```
-2. Install dependencies:
+2. **Install dependencies:**
    ```bash
-   yarn install
-   # OR
    npm install
+   # or
+   yarn install
    ```
-
-### Running Locally
-
-1. Start the Expo development server:
+3. **Start the development server:**
    ```bash
-   yarn start
-   # OR
    npm start
+   # or
+   expo start
    ```
-2. Scan the QR code with Expo Go on your iOS or Android device to preview the app.
+4. **Run on your device/emulator:**
+   - Android: `npm run android` or use Expo Go app
+   - iOS: `npm run ios` or use Expo Go app
+   - Web: `npm run web`
+
+For further help, see [Expo documentation](https://docs.expo.dev/) or [`docs/README.md`](docs/README.md).
 
 ---
 
 ## Available Scripts
 
-| Script         | Description                              |
-| -------------- | ---------------------------------------- |
-| `yarn start`   | Run Expo in development mode             |
-| `yarn android` | Run app on Android emulator/device       |
-| `yarn ios`     | Run app on iOS simulator/device          |
-| `yarn build`   | (If configured) Build app for production |
-| `yarn lint`    | Lint TypeScript/JavaScript code          |
-| `yarn test`    | Run unit/UI tests                        |
+The following npm scripts are available (see [`package.json`](package.json)):
 
-_All `yarn` commands can be replaced with `npm run` equivalents._
+| Command           | Description                       |
+| ----------------- | --------------------------------- |
+| `npm start`       | Starts Expo development server    |
+| `npm run android` | Start in Android emulator/Expo Go |
+| `npm run ios`     | Start in iOS simulator/Expo Go    |
+| `npm run web`     | Start app in web browser          |
 
 ---
 
 ## Project Scope
 
-**Core Features:**
+**MVP Features:**
 
-- Add clothing items with one or more photos
-- Manual and automatic (AI) categorization of clothing
-- Edit, view, and delete clothing and categories
-- Multi-value tagging; editable categories and tags
-- Attribute management (color, size, brand, season, location)
-- AI-suggested categories/attributes with user confirmation/correction
-- Offline sync queue (500 MB/500 photos max), Wi-Fi only by default
-- Photo upload processing (≤3MB/photo): 3 sizes, local cache, optional background removal
-- Duplicate detection (perceptual hash), comparison merge view
-- Guest mode with option to create an account (e-mail + magic link)
-- End-to-end data encryption (local and in-transit)
-- Fast search, smart lists (recently added, unused 90 days, "basement"), attribute filters
-- GDPR compliance; user consent for processing and model training; permanent data deletion on request
+- Add clothing with one or more photos
+- Manual and AI-assisted categorization/tagging
+- Edit, browse, or remove clothing, categories, and tags
+- Attribute support: color, size, brand, season, location (all optional)
+- Batch actions (change season/location for multiple items)
+- Deduplication (perceptual hash), duplicate merging
+- Fast search, smart lists, attribute-based filters
+- Offline-only operation; sync queue via Wi-Fi (up to 500 images / 500MB); 3MB/photo limit
+- Local and in-transit encryption; guest mode and email+magic link sign-in available
+- User control over AI suggestions and privacy
+- GDPR compliance (explicit consent, hard data delete)
 
-**MVP Limitations/Not included:**
+**Out of scope (MVP):**
 
-- Outfit suggestions
-- Gallery import
-- Wardrobe sharing/integrations (e.g., Vinted)
-- On-device AI inference (cloud inference only in MVP)
-- Export/import features (CSV/ZIP) – post-MVP decision
-- No synchronization over mobile data (Wi-Fi only), queue size limits as above
+- No outfit generator/recommendations
+- No gallery import/sharing/integrations (e.g., Vinted)
+- No on-device AI inference (cloud only for now)
+- No data import/export for MVP
+
+See the full [Product Requirements Document](.ai/prd.md) for user stories and detailed acceptance criteria.
 
 ---
 
 ## Project Status
 
-MVP stage: core offline-first clothing organization is implemented and under active development. Remote backup/sync, extensions, or cloud features may be added post-MVP (see docs for roadmap and architectural documents).
+- **Status:** MVP in development
+- **Offline-first**: 100% local storage (no cloud backend required)
+- **Sync:** Planned future addition via Supabase (opt-in)
+- **Languages:** Polish (primary), English planned
+- **Testing:** Minimum user-flow test implemented (add → visible in list)
+- **Documentation:** See [`docs/`](docs/) for specifications, system design, privacy, and test plan
+- **Success metrics:**
+  - ≥75% user acceptance of AI-suggested main categories
+  - % wardrobe items with complete attributes (category, location, season)
+
+> Track progress and planned features in project boards/issues.
 
 ---
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the [0BSD License](https://opensource.org/licenses/0BSD).
 
 ---
-
-For more details and technical documentation, see the `docs/` directory.
