@@ -10,9 +10,10 @@
 2. [Tech Stack](#tech-stack)
 3. [Getting Started Locally](#getting-started-locally)
 4. [Available Scripts](#available-scripts)
-5. [Project Scope](#project-scope)
-6. [Project Status](#project-status)
-7. [License](#license)
+5. [Database Migrations](#database-migrations)
+6. [Project Scope](#project-scope)
+7. [Project Status](#project-status)
+8. [License](#license)
 
 ---
 
@@ -98,6 +99,29 @@ The following npm scripts are available (see [`package.json`](package.json)):
 | `npm run android` | Start in Android emulator/Expo Go |
 | `npm run ios`     | Start in iOS simulator/Expo Go    |
 | `npm run web`     | Start app in web browser          |
+
+---
+
+## Database Migrations
+
+The local SQLite schema uses versioned SQL file migrations for full transparency, code review, and reproducibility. Migrations are based on a simple DDD registry pattern:
+
+- Each database change is described as a pair of SQL files (up and down, for rollback)
+- Files are stored in `src/db/migrations/`, with names like `20251022151045_create_initial_schema.up.sql` and `.down.sql`.
+- Every migration must be registered in `src/db/MigrationsRegistry.ts` for the app to apply it (or roll it back)
+- The migration system only applies "up" migrations that have not been run yet (tracked in a dedicated `migrations` table in the SQLite DB)
+
+For **detailed workflow and developer instructions, see [`src/db/README.md`](src/db/README.md)**.
+
+_Example developer flow to add migration:_
+
+1. Create a pair of schema migration SQL files in `/src/db/migrations/`:
+   - `20251101090000_add_outfits.up.sql`
+   - `20251101090000_add_outfits.down.sql`
+2. Register in `/src/db/MigrationsRegistry.ts` (see template inside).
+3. On next app start/dev run, `MigrationManager` will upgrade DB schema automatically.
+
+_Migrations provide full offline durability and ensure up/down repeatability, making schema evolution deterministic and safe._
 
 ---
 
