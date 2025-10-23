@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "generate:migrations": "ts-node db/generateMigrationsRegistry.ts"
+    "generate:migrations": "ts-node src/db/generateMigrationsRegistry.ts"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.4.9",
@@ -36,8 +36,8 @@
     "@types/react": "~19.1.0",
     "jest": "^29.7.0",
     "react-test-renderer": "19.1.0",
-    "typescript": "~5.9.2",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.2"
   },
   "private": true
 }

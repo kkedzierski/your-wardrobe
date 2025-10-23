@@ -113,7 +113,9 @@ export class MigrationManager {
     const applied = await this.getAppliedMigrationIds();
     const toRollback = getDownMigrations().filter(
       (m) =>
-        applied.includes(m.id.replace(".down", ".up")) || applied.includes(m.id)
+        typeof m.id === "string" &&
+        (applied.includes(m.id.replace(".down", ".up")) ||
+          applied.includes(m.id))
     );
     const results: MigrationResult[] = [];
     for (const migration of toRollback.reverse()) {

@@ -1,8 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "url";
 
-const migrationsDir = path.join(__dirname, "../src/db/migrations");
-const registryPath = path.join(__dirname, "../src/db/MigrationsRegistry.ts");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const migrationsDir = path.join(__dirname, "../db/migrations");
+const registryPath = path.join(__dirname, "../db/MigrationsRegistry.ts");
 
 function getMigrations(suffix: string) {
   return fs
