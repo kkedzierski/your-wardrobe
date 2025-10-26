@@ -1,14 +1,17 @@
+// src/db/database.ts
 import * as SQLite from "expo-sqlite";
-// import Constants from "expo-constants";
+import Constants from "expo-constants";
 
 export type DatabaseSingleton = SQLite.SQLiteDatabase;
 
 let db: DatabaseSingleton | null = null;
 
-// Dla kompatybilności Expo/DEV: próbuj process.env, potem Constants.manifest.extra.DB_NAME, potem default
+// Nazwa bazy - tak jak miałeś
 const getDbName = (): string => {
-  return process.env.DB_NAME;
+  return Constants.expoConfig?.extra?.DB_NAME ?? "yourwardrobe.db";
 };
 
-export const getDb = (): DatabaseSingleton =>
-  db || (db = SQLite.openDatabaseSync(getDbName()));
+// Uwaga: teraz to jest ASYNC, bo openDatabaseAsync zwraca Promise.
+export const getDb = async (): Promise<DatabaseSingleton> => {
+  return db || (await SQLite.openDatabaseAsync(getDbName()));
+};

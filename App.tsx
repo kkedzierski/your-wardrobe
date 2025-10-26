@@ -9,12 +9,14 @@ export default function App() {
     runMigrations(MigrationType.Up)
       .then(() => console.log("Migracje OK"))
       .catch((err) => {
-        console.error("Błąd migracji bazy:", err);
+        console.error("❌ Migration error:", err.message);
+        console.error("📄 Migration error details:", err);
+        console.error("🧭 Stack trace:", err.stack);
       });
   }, []);
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <Text>Hello up App.tsx to start working on your app!</Text>
       <StatusBar style="auto" />
     </View>
   );

@@ -1,6 +1,8 @@
 import { Migration } from "./Migration";
 export const getUpMigrations = (): Migration[] => [
-  new Migration("20251022151045_create_initial_schema.up.sql", `
+  new Migration(
+    "20251022151045_create_initial_schema.up.sql",
+    `
 -- --------------------------------------------
 -- Migracja: 20251022151045_create_initial_schema.up.sql
 -- Cel: Utworzenie początkowego schematu bazy danych dla "Your Wardrobe"
@@ -118,17 +120,15 @@ create index if not exists idx_category_user_id on categories(user_id);
 create index if not exists idx_tags_user_id on tags(user_id);
 create index if not exists idx_outfit_user_id on outfits(user_id);
 create index if not exists idx_tags_name_user_id on tags(name, user_id);
-create unique index if not exists main_photo_per_cloth on cloth_photos(cloth_id) where main = 1;
--- Tabela migracji
-create table if not exists migrations (
-    id integer primary key autoincrement,
-    migration_id text unique not null
-);
-`)
+create unique index if not exists main_photo_per_cloth on cloth_photos(cloth_id, main);
+`
+  ),
 ];
 
 export const getDownMigrations = (): Migration[] => [
-  new Migration("20251022151045_create_initial_schema.down.sql", `
+  new Migration(
+    "20251022151045_create_initial_schema.down.sql",
+    `
 -- --------------------------------------------
 -- Migracja: 20251022151045_create_initial_schema.down.sql
 -- Cel: Cofnięcie początkowego schematu bazy danych dla "Your Wardrobe"
@@ -153,5 +153,6 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS cloth_photos;
 DROP TABLE IF EXISTS cloth;
 DROP TABLE IF EXISTS users;
-`)
+`
+  ),
 ];

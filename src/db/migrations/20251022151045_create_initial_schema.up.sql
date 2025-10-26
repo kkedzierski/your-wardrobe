@@ -116,8 +116,3 @@ create index if not exists idx_tags_user_id on tags(user_id);
 create index if not exists idx_outfit_user_id on outfits(user_id);
 create index if not exists idx_tags_name_user_id on tags(name, user_id);
 create unique index if not exists main_photo_per_cloth on cloth_photos(cloth_id) where main = 1;
--- Tabela migracji
-create table if not exists migrations (
-    id integer primary key autoincrement,
-    migration_id text unique not null
-);
