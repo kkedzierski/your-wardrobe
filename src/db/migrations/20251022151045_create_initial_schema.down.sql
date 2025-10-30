@@ -12,7 +12,6 @@ DROP INDEX IF EXISTS idx_category_user_id;
 DROP INDEX IF EXISTS idx_photo_cloth_id;
 DROP INDEX IF EXISTS idx_cloth_user_id;
 DROP TABLE IF EXISTS history_changes;
-DROP TABLE IF EXISTS duplicate_map;
 DROP TABLE IF EXISTS ai_suggestions_log;
 DROP TABLE IF EXISTS outfit_items;
 DROP TABLE IF EXISTS outfits;

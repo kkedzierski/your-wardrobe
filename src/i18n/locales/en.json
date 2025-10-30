@@ -1,0 +1,6 @@
+{
+  "No photo file in the request.": "No photo file in the request.",
+  "Photo must be a File or Blob type.": "Photo must be a File or Blob type.",
+  "Only JPG or PNG files are accepted.": "Only JPG or PNG files are accepted.",
+  "The photo size limit is 5MB.": "The photo size limit is 5MB."
+}
