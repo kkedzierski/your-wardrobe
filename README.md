@@ -34,13 +34,15 @@ For full product requirements and user stories, see [`docs/README.md`](docs/READ
 ## Tech Stack
 
 - **Frontend**: [Expo (managed)](https://docs.expo.dev/) + [React Native](https://reactnative.dev/) (TypeScript)
+
   - React Navigation (stack/tabs navigation)
   - [React Native Paper](https://callstack.github.io/react-native-paper/): accessible UI components
   - [expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/): local database storage (CRUD, migrations)
   - [expo-camera](https://docs.expo.dev/versions/latest/sdk/camera/), [expo-image-manipulator](https://docs.expo.dev/versions/latest/sdk/image-manipulator/), [expo-file-system](https://docs.expo.dev/versions/latest/sdk/filesystem/): photo capture, compression, thumbnailing, file storage
-  - [expo-crypto](https://docs.expo.dev/versions/latest/sdk/crypto/): deduplication
+
   - [expo-secure-store](https://docs.expo.dev/versions/latest/sdk/securestore/), [expo-local-authentication](https://docs.expo.dev/versions/latest/sdk/local-authentication/): biometric & PIN lock
   - [react-i18next](https://react.i18next.com/) + [react-native-localize](https://github.com/zoontek/react-native-localize): internationalization (PL now, EN-ready)
+
 - **Backend:** Offline-only in MVP (no remote backend); optional future sync (Supabase)
   - Export/Import (backup v1): Planned via ZIP with JSON + thumbnails
 - **AI Assistance** (optional): Category/tag suggestions powered by large language models (cloud-based; user opt-in, "do not send images" mode)
@@ -134,7 +136,6 @@ _Migrations provide full offline durability and ensure up/down repeatability, ma
 - Edit, browse, or remove clothing, categories, and tags
 - Attribute support: color, size, brand, season, location (all optional)
 - Batch actions (change season/location for multiple items)
-- Deduplication (perceptual hash), duplicate merging
 - Fast search, smart lists, attribute-based filters
 - Offline-only operation; sync queue via Wi-Fi (up to 500 images / 500MB); 3MB/photo limit
 - Local and in-transit encryption; guest mode and email+magic link sign-in available

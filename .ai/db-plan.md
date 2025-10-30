@@ -32,7 +32,7 @@
 - `cloth_id` INTEGER NOT NULL REFERENCES cloth(id) ON DELETE CASCADE
 - `user_id` INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 - `file_path` TEXT NOT NULL
-- `hash` TEXT NOT NULL -- perceptual hash/podst. hash do deduplikacji
+- `hash` TEXT NOT NULL -- perceptual hash/podst. hash do deduplikacji po MVP
 - `main` INTEGER NOT NULL DEFAULT 0 -- BOOL, tylko jedno TRUE na cloth_id
 - `created_at` INTEGER NOT NULL
 - `deleted_at` INTEGER
@@ -90,13 +90,6 @@
 - `user_decision` TEXT -- accept/edit
 - `created_at` INTEGER NOT NULL
 
-### duplicate_map
-
-- `photo_id` INTEGER NOT NULL REFERENCES cloth_photos(id) ON DELETE CASCADE
-- `duplicate_of_photo_id` INTEGER NOT NULL REFERENCES cloth_photos(id) ON DELETE CASCADE
-- `created_at` INTEGER
-- PRIMARY KEY(photo_id, duplicate_of_photo_id)
-
 ### history_changes
 
 - `id` INTEGER PRIMARY KEY AUTOINCREMENT
@@ -113,7 +106,6 @@
 - Wiele-to-wielu: cloth_tags (wiele tagów do cloth, unikalność per user)
 - Wiele-to-wielu: outfit_items (wiele cloth w outfit, jedno cloth w wielu outfitach)
 - categories/ tags powiązane z userem i edytowalne (per user)
-- duplicate_map: mapa duplikatów zdjęć (tylko cloth_photos)
 
 ## 3. Indeksy
 

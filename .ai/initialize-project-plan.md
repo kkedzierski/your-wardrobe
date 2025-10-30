@@ -28,9 +28,6 @@ npx expo install expo-sqlite
 # Kamera, zdjęcia, pliki:
 npx expo install expo-camera expo-image-manipulator expo-file-system
 
-# Hash i deduplikacja:
-npx expo install expo-crypto
-
 # Biometria, PIN, storage:
 npx expo install expo-local-authentication expo-secure-store
 

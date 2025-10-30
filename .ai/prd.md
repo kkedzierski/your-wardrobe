@@ -2,7 +2,7 @@
 
 ## 1. Przegląd produktu
 
-Twoja szafa to aplikacja typu offline-first na platformy iOS/Android (React Native), której celem jest umożliwienie użytkownikom łatwego katalogowania, zarządzania oraz organizowania własnej garderoby. System wspiera ręczne i automatyczne kategoryzowanie ubrań, oferuje deduplikację oraz zaawansowane przeszukiwanie własnych zasobów. Projekt powstał, by zredukować chaos w przechowywaniu ubrań i eliminować niepotrzebne zakupy, jednocześnie dbając o bezpieczeństwo i prywatność danych.
+Twoja szafa to aplikacja typu offline-first na platformy iOS/Android (React Native), której celem jest umożliwienie użytkownikom łatwego katalogowania, zarządzania oraz organizowania własnej garderoby. System wspiera ręczne i automatyczne kategoryzowanie ubrań, oferuje zaawansowane przeszukiwanie własnych zasobów. Projekt powstał, by zredukować chaos w przechowywaniu ubrań i eliminować niepotrzebne zakupy, jednocześnie dbając o bezpieczeństwo i prywatność danych.
 
 ## 2. Problem użytkownika
 
@@ -18,10 +18,9 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
 6. Automatyczna propozycja kategorii/atrybutów przez AI z mechanizmem potwierdzania/korekty przez użytkownika
 7. Kolejka synchronizacji offline z obsługą limitów (500 MB/500 zdjęć), trybu Wi-Fi domyślnie, backoff i ekranem zarządzania zadaniami
 8. Media pipeline: upload ≤ 3 MB/zdjęcie, generowanie 3 rozmiarów, lokalny cache, opcjonalne usuwanie tła
-9. Deduplikacja (perceptual hash), widok porównawczy, scalanie duplikatów
-10. Profile użytkowników: tryb gościa, przejście na konto przez e-mail z magic link, szyfrowanie danych lokalnie i w tranzycie, „tylko Wi-Fi”
-11. Szybkie wyszukiwanie, inteligentne listy (ostatnio dodane, nieużywane 90 dni, „piwnica”), filtry po atrybutach
-12. Zgody na przetwarzanie danych, twarde usunięcie danych na żądanie, zgodność z RODO
+9. Profile użytkowników: tryb gościa, przejście na konto przez e-mail z magic link, szyfrowanie danych lokalnie i w tranzycie, „tylko Wi-Fi”
+10. Szybkie wyszukiwanie, inteligentne listy (ostatnio dodane, nieużywane 90 dni, „piwnica”), filtry po atrybutach
+11. Zgody na przetwarzanie danych, twarde usunięcie danych na żądanie, zgodność z RODO
 
 ## 4. Granice produktu
 
@@ -78,16 +77,7 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
   - Szybka wyszukiwarka
   - Gotowe filtry/listy (ostatnio dodane, nieużywane 90 dni, piwnica)
 
-### US-006: Deduplikacja
-
-- Tytuł: Wykrywanie i scalanie duplikatów
-- Opis: Jako użytkownik chcę otrzymać powiadomienie o potencjalnych duplikatach (przy dodaniu/edycji) i mieć możliwość porównania oraz ich scalenia.
-- Kryteria akceptacji:
-  - Automatyczne powiadomienie o potencjalnych duplikatach (p-hash)
-  - Widok porównawczy
-  - Możliwość wyboru okładki i atrybutów końcowych
-
-### US-007: Masowe akcje i zarządzanie lokalizacją/sezonem
+### US-006: Masowe akcje i zarządzanie lokalizacją/sezonem
 
 - Tytuł: Zarządzanie sezonami i lokalizacjami
 - Opis: Jako użytkownik chcę oznaczać ubrania masowo jako sezonowe lub zmieniać lokalizację przechowywania (np. przenieść do piwnicy).
@@ -95,16 +85,7 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
   - Wybór wielu elementów
   - Masowe akcje: zmiana sezonu/lokalizacji, oznaczenie jako sezonowe
 
-### US-008: Obsługa offline, synchronizacja i status zadań
-
-- Tytuł: Tryb offline i kolejka synchronizacji
-- Opis: Jako użytkownik chcę korzystać z aplikacji offline i mieć pewność synchronizacji z chmurą po połączeniu z Wi-Fi, z podglądem statusu i możliwością ponawiania/wycofywania operacji.
-- Kryteria akceptacji:
-  - Kolejka działa offline, synchronizuje się przy Wi-Fi
-  - Ekran zarządzania zadaniami w toku
-  - Możliwość ponowienia/wycofania
-
-### US-009: Obsługa konta użytkownika i bezpieczeństwo
+### US-008: Obsługa konta użytkownika i bezpieczeństwo
 
 - Tytuł: Bezpieczna rejestracja, logowanie i przechowywanie danych
 - Opis: Jako użytkownik chcę zacząć w trybie gościa, a następnie przejść do konta (e-mail/magic link) bez utraty danych, z zachowaniem pełnego bezpieczeństwa i prywatności.
@@ -113,7 +94,7 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
   - Szyfrowanie danych lokalnie i w tranzycie
   - Magic link/mail do logowania
 
-### US-010: Zgody, prywatność, usuwanie danych
+### US-009: Zgody, prywatność, usuwanie danych
 
 - Tytuł: Zarządzanie zgodami i prywatnością
 - Opis: Jako użytkownik chcę mieć wyraźny wybór co do udziału w trenowaniu modeli AI oraz możliwość twardego usunięcia moich danych.

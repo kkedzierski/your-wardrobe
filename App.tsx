@@ -1,10 +1,14 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
-import { runMigrations } from "./src/db";
-import { MigrationType } from "./src/db";
+import { StyleSheet, Text, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { runMigrations, MigrationType } from "./src/db";
+import "./src/i18n/i18n";
+
+import { useTranslation } from "react-i18next";
 
 export default function App() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     runMigrations(MigrationType.Up)
       .then(() => console.log("Migracje OK"))
@@ -14,14 +18,16 @@ export default function App() {
         console.error("🧭 Stack trace:", err.stack);
       });
   }, []);
+
   return (
     <View style={styles.container}>
-      <Text>Hello up App.tsx to start working on your app!</Text>
+      <Text>{t("Hello up App.tsx to start working on your app!")}</Text>
       <StatusBar style="auto" />
     </View>
   );
 }
 
+// style jak miałeś
 const styles = StyleSheet.create({
   container: {
     flex: 1,

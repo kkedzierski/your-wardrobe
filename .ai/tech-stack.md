@@ -5,7 +5,6 @@ Frontend – Expo (managed) + React Native:
 • React Native Paper → gotowe, dostępne komponenty UI
 • expo-sqlite → lokalna baza z CRUD i prostymi migracjami SQL
 • expo-camera + expo-image-manipulator + expo-file-system → zdjęcia, kompresja, miniatury i zapis
-• expo-crypto → hash (SHA-256/MD5) do deduplikacji
 • expo-local-authentication + expo-secure-store → ekran blokady: biometria + PIN (kontrola dostępu)
 • react-i18next + react-native-localize → PL teraz, gotowość pod EN
 
@@ -28,7 +27,7 @@ CI/CD i Hosting:
 Spełnienie wymagań:
 • Kontrola dostępu → biometria + PIN (SecureStore)
 • CRUD → expo-sqlite + repo/metody (lista, dodaj, edytuj, usuń, filtry)
-• Logika biznesowa → słowniki kategorii/kolorów/sezonów, filtry/sort, deduplikacja po hash
+• Logika biznesowa → słowniki kategorii/kolorów/sezonów, filtry/sort
 • PRD & dokumenty → katalog docs/ w repo (PRD, SystemDesign, Privacy, TestPlan, Roadmap)
 • Testy → min. jeden test z perspektywy użytkownika (dodanie elementu → widoczny na liście)
 • CI/CD → GitHub Actions (testy) + EAS Build/Update
