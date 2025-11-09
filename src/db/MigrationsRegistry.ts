@@ -1,8 +1,6 @@
 import { Migration } from "./Migration";
 export const getUpMigrations = (): Migration[] => [
-  new Migration(
-    "20251022151045_create_initial_schema.up.sql",
-    `
+  new Migration("20251022151045_create_initial_schema.up.sql", `
 -- --------------------------------------------
 -- Migracja: 20251022151045_create_initial_schema.up.sql
 -- Cel: Utworzenie początkowego schematu bazy danych dla "Your Wardrobe"
@@ -11,8 +9,9 @@ export const getUpMigrations = (): Migration[] => [
 -- --------------------------------------------
 -- Tabela użytkowników
 create table if not exists users (
-    id integer primary key autoincrement,
+    id TEXT PRIMARY KEY NOT NULL,
     email text,
+    kind TEXT NOT NULL CHECK (kind IN ('guest','oauth')),
     role text default 'ROLE_USER' not null,
     created_at integer not null,
     updated_at integer not null,
@@ -97,6 +96,7 @@ create table if not exists ai_suggestions_log (
     user_decision text,
     created_at integer not null
 );
+
 -- Historia zmian (audyt)
 create table if not exists history_changes (
     id integer primary key autoincrement,
@@ -113,15 +113,12 @@ create index if not exists idx_category_user_id on categories(user_id);
 create index if not exists idx_tags_user_id on tags(user_id);
 create index if not exists idx_outfit_user_id on outfits(user_id);
 create index if not exists idx_tags_name_user_id on tags(name, user_id);
-create unique index if not exists main_photo_per_cloth on cloth_photos(cloth_id, main);
-`
-  ),
+create unique index if not exists main_photo_per_cloth on cloth_photos(cloth_id) where main = 1;
+`)
 ];
 
 export const getDownMigrations = (): Migration[] => [
-  new Migration(
-    "20251022151045_create_initial_schema.down.sql",
-    `
+  new Migration("20251022151045_create_initial_schema.down.sql", `
 -- --------------------------------------------
 -- Migracja: 20251022151045_create_initial_schema.down.sql
 -- Cel: Cofnięcie początkowego schematu bazy danych dla "Your Wardrobe"
@@ -145,6 +142,5 @@ DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS cloth_photos;
 DROP TABLE IF EXISTS cloth;
 DROP TABLE IF EXISTS users;
-`
-  ),
+`)
 ];

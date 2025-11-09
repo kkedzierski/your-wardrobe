@@ -6,8 +6,9 @@
 -- --------------------------------------------
 -- Tabela użytkowników
 create table if not exists users (
-    id integer primary key autoincrement,
+    id TEXT PRIMARY KEY NOT NULL,
     email text,
+    kind TEXT NOT NULL CHECK (kind IN ('guest','oauth')),
     role text default 'ROLE_USER' not null,
     created_at integer not null,
     updated_at integer not null,
