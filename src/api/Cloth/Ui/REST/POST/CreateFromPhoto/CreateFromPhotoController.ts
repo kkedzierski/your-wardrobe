@@ -1,50 +1,60 @@
-import { CreateClothFromPhotoInput } from "./CreateFromPhotoInput";
-import { ApiErrorCode, ApiResponse } from "../../../../../Kernel/ApiResponse";
-import { validatePhotoInput } from "./Validators/validatePhotoInput";
-import { CreateClothFromPhotoHandler } from "../../../../Application/Services/CreateClothFromPhotoHandler";
-import { ClothFromPhotoDTO } from "../../../../Application/Commands/ClothFromPhotoDTO";
-import { CreateClothFromPhotoCommand } from "../../../../Application/Commands/CreateClothFromPhotoCommand";
+// src/api/Cloth/Ui/REST/POST/CreateFromPhoto/postCreateFromPhoto.ts
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system/legacy";
 
-export async function createClothFromPhoto(
-  input: CreateClothFromPhotoInput,
-  userId: number
-): Promise<ApiResponse<ClothFromPhotoDTO>> {
-  const validated = validatePhotoInput(input.photo);
-  if (!validated.ok) {
-    return new ApiResponse<ClothFromPhotoDTO>({
-      ok: false,
-      code: validated.code ?? ApiErrorCode.BAD_REQUEST,
-      message: validated.message ?? "Invalid photo input.",
-      logInfo: true,
-      customLogMessage: "createClothFromPhoto: invalid photo",
-    });
-  }
+import { CreateFromPhotoInput } from "./CreateFromPhotoInput";
+import { Api, ApiErrorCode } from "../../../../../Kernel/ApiResponse";
+import { createClothFromPhoto } from "../../../../Application/Services/CreateClothFromPhotoHandler";
+import { CreateClothFromPhotoDTO } from "../../../../Application/Commands/CreateFromPhotoDTO";
 
-  const command: CreateClothFromPhotoCommand = {
-    photo: validated.data!.blob,
-    name: input.name,
-    description: input.description,
-    category_id: input.category_id,
-    color: input.color,
-    brand: input.brand,
-    season: input.season,
-    location: input.location,
-    tags: input.tags,
-    ai_suggestions: input.ai_suggestions,
-    userId,
-  };
+/** Schowane defaulty – UI o nich nie wie */
+const DEFAULTS = {
+  targetDir: FileSystem.documentDirectory + "photos/",
+  main: true as boolean,
+  allowsEditing: false,
+  quality: 0.9,
+};
 
+/** Jedna prosta funkcja, którą woła komponent. */
+export async function postCreateFromPhoto(input: CreateFromPhotoInput = {}) {
   try {
-    const dto = await CreateClothFromPhotoHandler.handle(command);
-    return new ApiResponse<ClothFromPhotoDTO>({ ok: true, data: dto });
-  } catch (e: any) {
-    // AppException -- obsłuż błędny przypadek aplikacyjny
-    return new ApiResponse<ClothFromPhotoDTO>({
-      ok: false,
-      code: e.code ?? ApiErrorCode.INTERNAL,
-      message: e.message ?? "Application error.",
-      logInfo: true,
-      customLogMessage: e.customLogMessage ?? "Exception in handler",
+    // 1) Permissions
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    if (!perm.granted) {
+      return Api.error(
+        ApiErrorCode.UNAUTHORIZED,
+        "Camera permission is required."
+      );
+    }
+
+    // 2) Camera
+    const res = await ImagePicker.launchCameraAsync({
+      allowsEditing: DEFAULTS.allowsEditing,
+      quality: DEFAULTS.quality,
     });
+
+    if (res.canceled || !res.assets?.[0]?.uri) {
+      return Api.error(ApiErrorCode.BAD_REQUEST, "Taking photo was cancelled.");
+    }
+
+    const asset = res.assets[0];
+
+    // 3) Command -> handler
+    const dto: CreateClothFromPhotoDTO = await createClothFromPhoto({
+      srcUri: asset.uri,
+      fileName: asset.fileName ?? null,
+      mimeType: (asset as any).mimeType ?? null,
+      targetDir: DEFAULTS.targetDir,
+      forceExt: input.forceExt,
+      main: input.main ?? DEFAULTS.main,
+    });
+
+    // 4) Success (data opcjonalne – tu zwracamy)
+    return Api.ok<CreateClothFromPhotoDTO>(dto);
+  } catch (e: any) {
+    return Api.error(
+      ApiErrorCode.INTERNAL,
+      e?.message ?? "Failed to add photo."
+    );
   }
 }

@@ -1,38 +1,43 @@
-import * as FileSystem from "expo-file-system";
-import * as Crypto from "expo-crypto";
-import { ClothFromPhotoDTO } from "../Commands/ClothFromPhotoDTO";
+import { getActiveUserId } from "../../../../auth/ensureGuestUser";
+import { insertClothWithPhoto } from "../../../Cloth/Infrastructure/ClothRepository";
+import { EventBus, EVENTS } from "../../../../events/bus";
+import { saveImage } from "./SaveImageService";
+import { hashFileSha256Base64 } from "./HashService";
 import { CreateClothFromPhotoCommand } from "../Commands/CreateClothFromPhotoCommand";
-import { AppException } from "../../../Kernel/AppException";
-import { safeB64 } from "../../Infrastructure/safeB64";
-import { HashService } from "./HashService";
-import { PhotoStorageService } from "./PhotoStorageService";
+import { CreateClothFromPhotoDTO } from "../Commands/CreateFromPhotoDTO";
 
-export class CreateClothFromPhotoHandler {
-  static async handle(
-    command: CreateClothFromPhotoCommand
-  ): Promise<ClothFromPhotoDTO> {
-    // 1. Hash
-    const sha256 = await HashService.getPhotoHash(command.photo);
-    // 2. Photo save
-    const fileUri = await PhotoStorageService.savePhoto(command.photo, sha256);
-    // 3. (docelowo: zapis rekordu, itd. - tu tylko szkielet DTO, ID zero)
-    const now = Date.now();
-    return {
-      id: 0,
-      name: command.name ?? "Nowe ubranie",
-      photos: [
-        {
-          id: 0,
-          cloth_id: 0,
-          user_id: command.userId,
-          file_path: fileUri,
-          hash: sha256,
-          main: true,
-          created_at: now,
-          deleted_at: null,
-        },
-      ],
-      ai_suggestions: undefined,
-    };
-  }
+export async function createClothFromPhoto(
+  cmd: CreateClothFromPhotoCommand
+): Promise<CreateClothFromPhotoDTO> {
+  // 1) hash
+  const hash = await hashFileSha256Base64(cmd.srcUri);
+
+  // 2) zapis obrazu
+  const saved = await saveImage({
+    srcUri: cmd.srcUri,
+    targetDir: cmd.targetDir,
+    hash,
+    fileName: cmd.fileName ?? undefined,
+    mimeType: cmd.mimeType ?? undefined,
+    forceExt: cmd.forceExt,
+  });
+
+  // 3) DB
+  const userUuid = await getActiveUserId();
+  const clothId = await insertClothWithPhoto({
+    user_id: userUuid,
+    file_path: saved.destUri,
+    hash,
+    main: cmd.main ? 1 : 0,
+  });
+
+  // 4) Event
+  EventBus.emit(EVENTS.WARDROBE_PHOTO_ADDED);
+
+  return {
+    clothId,
+    destUri: saved.destUri,
+    hash,
+    ext: saved.ext,
+  };
 }

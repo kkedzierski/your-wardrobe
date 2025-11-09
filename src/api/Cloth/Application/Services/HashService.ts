@@ -1,21 +1,9 @@
 import * as Crypto from "expo-crypto";
-import { AppException } from "../../../Kernel/AppException";
+import * as FileSystem from "expo-file-system/legacy";
 
-export class HashService {
-  static async getPhotoHash(blob: Blob): Promise<string> {
-    try {
-      const buf = await blob.arrayBuffer();
-      return await Crypto.digestStringAsync(
-        Crypto.CryptoDigestAlgorithm.SHA256,
-        String.fromCharCode.apply(null, Array.from(new Uint8Array(buf))),
-        { encoding: Crypto.CryptoEncoding.HEX }
-      );
-    } catch (err) {
-      throw new AppException(
-        "Could not generate file hash.",
-        "HASH_ERROR",
-        err
-      );
-    }
-  }
+export async function hashFileSha256Base64(fileUri: string) {
+  const base64 = await FileSystem.readAsStringAsync(fileUri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, base64);
 }

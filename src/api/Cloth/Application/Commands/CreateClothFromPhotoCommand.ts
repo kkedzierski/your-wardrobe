@@ -1,13 +1,10 @@
+import { AllowedExt } from "../../Infrastructure/AllowedExt";
+
 export interface CreateClothFromPhotoCommand {
-  photo: Blob;
-  name?: string;
-  description?: string;
-  category_id?: number;
-  color?: string;
-  brand?: string;
-  season?: string;
-  location?: string;
-  tags?: number[];
-  ai_suggestions?: boolean;
-  userId: number;
+  srcUri: string;
+  fileName: string | null;
+  mimeType: string | null;
+  targetDir: string;
+  forceExt?: AllowedExt;
+  main: boolean; // w komendzie już bez ? – handler ma dostać pełne dane
 }
