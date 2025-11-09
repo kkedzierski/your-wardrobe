@@ -1,13 +1,12 @@
 // src/api/Cloth/Ui/REST/POST/CreateFromPhoto/postCreateFromPhoto.ts
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
-
 import { CreateFromPhotoInput } from "./CreateFromPhotoInput";
 import { Api, ApiErrorCode } from "../../../../../Kernel/ApiResponse";
 import { createClothFromPhoto } from "../../../../Application/Services/CreateClothFromPhotoHandler";
 import { CreateClothFromPhotoDTO } from "../../../../Application/Commands/CreateFromPhotoDTO";
+import { Logger } from "../../../../../Kernel/Logger";
 
-/** Schowane defaulty – UI o nich nie wie */
 const DEFAULTS = {
   targetDir: FileSystem.documentDirectory + "photos/",
   main: true as boolean,
@@ -15,7 +14,6 @@ const DEFAULTS = {
   quality: 0.9,
 };
 
-/** Jedna prosta funkcja, którą woła komponent. */
 export async function postCreateFromPhoto(input: CreateFromPhotoInput = {}) {
   try {
     // 1) Permissions
@@ -23,7 +21,7 @@ export async function postCreateFromPhoto(input: CreateFromPhotoInput = {}) {
     if (!perm.granted) {
       return Api.error(
         ApiErrorCode.UNAUTHORIZED,
-        "Camera permission is required."
+        "Access to the camera is required."
       );
     }
 
@@ -49,9 +47,10 @@ export async function postCreateFromPhoto(input: CreateFromPhotoInput = {}) {
       main: input.main ?? DEFAULTS.main,
     });
 
-    // 4) Success (data opcjonalne – tu zwracamy)
-    return Api.ok<CreateClothFromPhotoDTO>(dto);
+    // 4) Success – z komunikatem EN (pasującym do pl.json)
+    return Api.ok<CreateClothFromPhotoDTO>(dto, "Photo added to wardrobe.");
   } catch (e: any) {
+    Logger.error("CreateFromPhoto", e);
     return Api.error(
       ApiErrorCode.INTERNAL,
       e?.message ?? "Failed to add photo."

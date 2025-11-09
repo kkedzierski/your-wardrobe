@@ -1,23 +1,25 @@
-import React, { useMemo, useState } from "react";
+// AddClothFromCameraButton.tsx
+import React, { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import styled from "styled-components/native";
-
 import { postCreateFromPhoto } from "../api/Cloth/Ui/REST/POST/CreateFromPhoto/CreateFromPhotoController";
-import { showAlertForApi } from "../ui/apiAlert";
+import { showNoticeForApi } from "../ui/apiNotice";
 
 export default function AddClothFromCameraButton() {
   const [loading, setLoading] = useState(false);
 
   const onPress = async () => {
-    setLoading(true);
-    const res = await postCreateFromPhoto({ main: true });
-    setLoading(false);
-
-    showAlertForApi(res, {
-      successTitle: "Done",
-      successMessage: "Photo added to wardrobe.",
-      errorTitle: "Error",
-    });
+    try {
+      setLoading(true);
+      const res = await postCreateFromPhoto({ main: true });
+      showNoticeForApi(res, {
+        titleSuccess: "Done",
+        fallbackSuccessMsg: "Operation completed.",
+        titleError: "Error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
