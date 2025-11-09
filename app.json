@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Używamy Face ID do odblokowania aplikacji.",
+        "NSCameraUsageDescription": "Używamy aparatu do dodawania zdjęć ubrań do garderoby."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +30,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-sqlite", "expo-secure-store"]
+    "plugins": [
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-apple-authentication"
+    ]
   }
 }

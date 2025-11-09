@@ -2,7 +2,7 @@
 
 ## 1. Przegląd struktury UI
 
-Aplikacja składa się z pięciu głównych sekcji dostępnych przez dolne menu (tab bar): Home, Garderoba, Outfit, Profil, Ustawienia/Więcej. Wykorzystuje nawigację stack (szczegóły/edycja), bottom sheets/modale (szybka edycja, działania krytyczne) oraz FAB-y do nawigacji i szybkich akcji. Filtry i smart listy są stale dostępne w głównych widokach. Wszystkie ścieżki projektowane są z myślą o offline-first, zgodności WCAG, bezpieczeństwie oraz prostocie obsługi.
+Aplikacja składa się z czterech głównych sekcji dostępnych przez dolne menu (tab bar): Home, Garderoba, Outfit, Ustawienia/Więcej. Wykorzystuje nawigację stack (szczegóły/edycja), bottom sheets/modale (szybka edycja, działania krytyczne) oraz FAB-y do nawigacji i szybkich akcji. Filtry i smart listy są stale dostępne w głównych widokach. Wszystkie ścieżki projektowane są z myślą o offline-first, zgodności WCAG, bezpieczeństwie oraz prostocie obsługi.
 
 ## 2. Lista widoków
 
