@@ -1,6 +1,10 @@
 {
-  "No photo file in the request.": "Brak pliku zdjęcia (photo) w żądaniu.",
-  "Photo must be a File or Blob type.": "Pole photo musi być typu File lub Blob.",
-  "Only JPG or PNG files are accepted.": "Akceptowane są tylko zdjęcia JPG lub PNG.",
-  "The photo size limit is 5MB.": "Limit rozmiaru zdjęcia to 5MB."
+  "Access to the camera is required.": "Zezwól na dostęp do aparatu.",
+  "Taking photo was cancelled.": "Anulowano robienie zdjęcia.",
+  "Failed to create cloth from photo.": "Nie udało się dodać zdjęcia.",
+  "Done": "Gotowe",
+  "Photo added to wardrobe.": "Zdjęcie dodane do garderoby.",
+  "Error": "Błąd",
+  "Operation completed.": "Operacja zakończona.",
+  "Failed to add photo.": "Nie udało się dodać zdjęcia."
 }
