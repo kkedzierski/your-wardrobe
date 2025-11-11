@@ -1,5 +1,5 @@
-import { Api, ApiErrorCode } from "../../../../../Kernel/ApiResponse";
-import { processEditTag } from "../../../../Application/Services/EditTagHandler";
+import { Api, ApiErrorCode } from "../../../../Kernel/ApiResponse";
+import { processEditTag } from "../../../Application/Services/EditTagHandler";
 import { EditTagInput } from "./EditTagInput";
 
 const M = {

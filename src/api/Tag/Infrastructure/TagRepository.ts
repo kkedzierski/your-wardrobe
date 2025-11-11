@@ -60,18 +60,14 @@ export async function getAllTags({
       : sort === "name:desc"
       ? "t.name COLLATE NOCASE DESC, t.id DESC"
       : "t.created_at DESC, t.id DESC";
+
   const sql = `
-    SELECT
-      t.id,
-      t.user_id,
-      t.name,
-      t.created_at,
-      t.updated_at
-    FROM tags t
-    WHERE (t.deleted_at IS NULL OR t.deleted_at IS NULL OR t.deleted_at IS NULL)
-      ${userId ? "AND t.user_id = ?" : ""}
-    ORDER BY ${orderBy}
-    LIMIT ? OFFSET ?;
+    SELECT t.id, t.user_id, t.name, t.created_at, t.updated_at
+      FROM tags t
+     WHERE 1=1
+       ${userId ? "AND t.user_id = ?" : ""}
+     ORDER BY ${orderBy}
+     LIMIT ? OFFSET ?;
   `;
   const params = userId ? [userId, limit, offset] : [limit, offset];
   const rows = await db.getAllAsync<Tag>(sql, params);
@@ -240,6 +236,67 @@ export async function deleteTagsBatch(
       deletedIds: existingIds,
       notFoundIds: notFound,
     };
+  } catch (e) {
+    await db.execAsync("ROLLBACK");
+    throw e;
+  }
+}
+
+export async function setTagsForCloth(
+  clothId: number,
+  tagIds: number[],
+  userId?: string
+) {
+  const db = await getDb();
+  await db.execAsync("BEGIN");
+  try {
+    // (opcjonalnie) walidacja, że cloth należy do usera
+    if (userId) {
+      const owns = await db.getFirstAsync<{ id: number }>(
+        "SELECT id FROM cloth WHERE id = ? AND user_id = ? LIMIT 1",
+        [clothId, userId]
+      );
+      if (!owns?.id) {
+        await db.execAsync("ROLLBACK");
+        return { ok: false as const, reason: "NO_CLOTH" };
+      }
+    }
+
+    // (opcjonalnie) walidacja, że wszystkie tagi należą do usera
+    if (userId && tagIds.length) {
+      const ph = tagIds.map(() => "?").join(",");
+      const rows = await db.getAllAsync<{ id: number }>(
+        `SELECT id FROM tags WHERE id IN (${ph}) AND user_id = ?`,
+        [...tagIds, userId]
+      );
+      const found = new Set(rows?.map((r) => r.id) ?? []);
+      const bad = tagIds.filter((id) => !found.has(id));
+      if (bad.length) {
+        await db.execAsync("ROLLBACK");
+        return { ok: false as const, reason: "FOREIGN_TAG", bad };
+      }
+    }
+
+    // wyczyść stare powiązania
+    await db.runAsync(
+      userId
+        ? `DELETE FROM cloth_tags WHERE cloth_id = ?`
+        : `DELETE FROM cloth_tags WHERE cloth_id = ?`,
+      [clothId]
+    );
+
+    // wstaw nowe
+    if (tagIds.length) {
+      const values = tagIds.map(() => "(?, ?)").join(",");
+      const args = tagIds.flatMap((tid) => [clothId, tid]);
+      await db.runAsync(
+        `INSERT INTO cloth_tags (cloth_id, tag_id) VALUES ${values}`,
+        args
+      );
+    }
+
+    await db.execAsync("COMMIT");
+    return { ok: true as const };
   } catch (e) {
     await db.execAsync("ROLLBACK");
     throw e;

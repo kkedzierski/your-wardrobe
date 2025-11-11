@@ -1,5 +1,5 @@
 import { getActiveUserId } from "../../../../auth/ensureGuestUser";
-import { insertTag } from "../../Tag/Infrastructure/TagRepository";
+import { insertTag } from "../../Infrastructure/TagRepository";
 import { CreateTagCommand } from "../Commands/CreateTagCommand";
 import { CreateTagDTO } from "../Commands/CreateTagDTO";
 
