@@ -10,8 +10,8 @@ Aplikacja składa się z czterech głównych sekcji dostępnych przez dolne menu
 
 - **Ścieżka:** /home
 - **Cel:** Szybki start dodawania ubrania (ze zdjęciem/manualnie); podgląd ostatnich działań, status synchronizacji
-- **Kluczowe dane:** Akcje „Zrób zdjęcie”, „Dodaj bez zdjęcia”; skróty do ostatnich aktywności/smart list; status sync
-- **Komponenty:** 2 duże CTA, sekcja aktywności, wskaźnik sync, toast/error/info
+- **Kluczowe dane:** Akcje „Zrób zdjęcie”,
+- **Komponenty:** 1 duże CTA
 - **UX/dostępność/bezp:** Duży kontrast, focus na głównych CTA, prosty tab order
 
 ### Garderoba (Wardrobe)
@@ -20,7 +20,7 @@ Aplikacja składa się z czterech głównych sekcji dostępnych przez dolne menu
 - **Cel:** Przegląd, filtrowanie, batch działania na ubraniach; szybka edycja kategorii/tagów
 - **Kluczowe dane:** Lista/siatka ubrań, sticky filtry (kategoria, tag, smart list), przycisk „Dodaj” (FAB)
 - **Komponenty:** Grid/List, FilterBar, SmartListTabs, FAB, BottomSheet (edit), Empty/Loader/Error
-- **UX/dostępność/bezp:** Ciągły dostęp do filtrów, aria-label do batch select, tryb dark/light, pull-to-refresh, obsługa screenreadera
+- **UX/dostępność/bezp:** Ciągły dostęp do filtrów, aria-label do batch select, pull-to-refresh, obsługa screenreadera
 
 ### Szczegóły ubrania
 
@@ -35,10 +35,10 @@ Aplikacja składa się z czterech głównych sekcji dostępnych przez dolne menu
 - **Ścieżka:** /add-cloth, /edit-cloth/:id
 - **Cel:** Dodawanie przez zdjęcie/manual, obsługa AI-suggest, przypisanie atrybutów/kategorii
 - **Kluczowe dane:** Form/stepper: zdjęcia → meta → AI suggest (opcjonalnie) → podgląd
-- **Komponenty:** Camera, PhotoUploader, FormStepper, AICategorySuggest, BottomSheet/Modal, Toast
+- **Komponenty:** Camera, PhotoUploader, FormStepper, BottomSheet/Modal, Toast
 - **UX/dostępność/bezp:** Walidacja na bieżąco, feedback błędów, loading/skeletony, offline-first
 
-### Outfits
+### Outfits - po MVP
 
 - **Ścieżka:** /outfits
 - **Cel:** Przegląd, tworzenie, modyfikacja zestawów ubrań
@@ -73,24 +73,24 @@ Aplikacja składa się z czterech głównych sekcji dostępnych przez dolne menu
 ## 3. Mapa podróży użytkownika
 
 1. **Dodanie ubrania (photo-first):**
-   - Home/FAB → Kamera → Zrób zdjęcie → AI-suggest (jeśli włączone) → Podgląd/edycja → Zapis → Garderoba
+   - Home/FAB → Kamera → Zrób zdjęcie → Podgląd/edycja → Zapis → Garderoba
 2. **Dodanie ubrania (manualne):**
    - Home/FAB → Formularz meta → (opcjonalnie zdjęcie) → Zapis → Garderoba
 3. **Przegląd/edycja ubrań:**
    - Garderoba → Filtruj/szukaj/smart-listy → Szczegóły → (Edycja przez bottom sheet/modal) → Powrót
-4. **Tworzenie outfitu:**
+4. **Tworzenie outfitu:** - po MVP
    - Outfits → FAB → Wybierz ubrania → Konfigurator/skład → Podgląd/Zapis
 5. **Akcje krytyczne (usuwanie danych/konta):**
-   - Profil/Ustawienia → Delete → Modal z frazą → Feedback → (Ekran startowy)
+   - Ustawienia/Profil → Delete → Modal z frazą → Feedback → (Ekran startowy)
 6. **Historia zmian:**
-   - Profil/Więcej → Historia → Lista zmian → Szczegół loga
+   - Ustawienia/Historia → Historia → Lista zmian → Szczegół loga
 
 ## 4. Układ i struktura nawigacji
 
-- **Bottom Tab Bar (5 sekcji):** Home, Garderoba, Outfit, Profil, Ustawienia/Więcej (stały; znika przy modalu)
+- **Bottom Tab Bar (4 sekcje):** Home, Garderoba, Outfit, Ustawienia/Więcej (stały; znika przy modalu)
 - **Stack Navigation:** Szczegóły/edycja ubrania, detale outfitu, edytory, historia
 - **FAB-y:** Zawsze widoczne do dodawania/zapoczątkowania kluczowych akcji
-- **Bottom Sheet/Modal:** Szybka edycja, batch select, AI suggest, zgody/critical actions
+- **Bottom Sheet/Modal:** Szybka edycja, batch select, zgody/critical actions
 - **Pull-to-refresh:** na listach, garderobie, outfitach
 - **Wskaźnik synchronizacji:** Ikona/przy menu, toast przy zmianie online/offline lub queue limit
 

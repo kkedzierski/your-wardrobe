@@ -19,7 +19,7 @@ import {
 import styled from "styled-components/native";
 import ClothCard from "./ClothCard";
 import { getClothesCollection } from "../api/Cloth/Ui/REST/GET/GetClothesCollection/GetClothesCollectionOutputController";
-import { BatchDeleteClothController } from "../api/Cloth/Ui/REST/DELETE/BatchDeleteCloth/BatchDeleteClothController";
+import { batchDeleteCloths } from "../api/Cloth/Ui/REST/DELETE/BatchDeleteCloth/BatchDeleteClothController";
 import { showNoticeForApi } from "../ui/apiNotice";
 import { EventBus, EVENTS } from "../events/bus";
 
@@ -125,7 +125,7 @@ const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
     const handleBatchDelete = useCallback(async () => {
       if (selectedIds.length === 0) return;
 
-      const res = await BatchDeleteClothController({
+      const res = await batchDeleteCloths({
         clothIds: selectedIds,
         userId,
       });

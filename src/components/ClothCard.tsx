@@ -3,15 +3,23 @@ import React, { useState, useCallback } from "react";
 import { Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native"; // ⬅️
 
-import { DeleteClothController } from "../api/Cloth/Ui/REST/DELETE/DeleteCloth/DeleteClothController";
+import { deleteCloth } from "../api/Cloth/Ui/REST/DELETE/DeleteCloth/DeleteClothController";
 import { showNoticeForApi } from "../ui/apiNotice";
 
 type Props = {
   cloth: { id: number; name: string; thumbUrl?: string };
   userId?: string;
   onDeleted?: (clothId: number) => void;
-  onEdit?: (clothId: number) => void;
+  onUpdated?: (payload: {
+    clothId: number;
+    description?: string;
+    color?: string;
+    brand?: string;
+    location?: string;
+    updatedAt: string;
+  }) => void;
 
   /** Batch-select API */
   selectionMode?: boolean;
@@ -23,12 +31,13 @@ export default function ClothCard({
   cloth,
   userId,
   onDeleted,
-  onEdit,
+  onUpdated,
   selectionMode = false,
   selected = false,
   onToggleSelect,
 }: Props) {
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation<any>(); // lub z typami Twojego stacka
 
   const confirmDelete = useCallback(() => {
     Alert.alert(
@@ -44,7 +53,7 @@ export default function ClothCard({
 
   const handleDelete = useCallback(async () => {
     setLoading(true);
-    const res = await DeleteClothController({ clothId: cloth.id, userId });
+    const res = await deleteCloth({ clothId: cloth.id, userId });
     setLoading(false);
 
     showNoticeForApi(res, {
@@ -60,18 +69,57 @@ export default function ClothCard({
     onToggleSelect?.(cloth.id);
   }, [cloth.id, onToggleSelect]);
 
+  // ⬇️ TU: zwykłe kliknięcie otwiera ekran edycji
   const onPressCard = useCallback(() => {
     if (selectionMode) {
       toggleSelect();
       return;
     }
-    // normalny tryb – pokaż menu akcji
+    // ⬇️ przejście do podglądu
+    navigation.navigate("ShowCloth", {
+      clothId: cloth.id,
+      title: cloth.name,
+    });
+  }, [selectionMode, toggleSelect, navigation, cloth.id, cloth.name]);
+
+  // menu „…”: dodaj „Podgląd” i „Edytuj”
+  const openActions = useCallback(() => {
+    if (selectionMode) {
+      toggleSelect();
+      return;
+    }
     Alert.alert("Akcje", "", [
-      { text: "Edytuj", onPress: () => onEdit?.(cloth.id) },
+      {
+        text: "Podgląd",
+        onPress: () =>
+          navigation.navigate("EditCloth", {
+            clothId: cloth.id,
+            title: cloth.name,
+          }),
+      },
+      {
+        text: "Edytuj",
+        onPress: () =>
+          navigation.navigate("EditCloth", {
+            clothId: cloth.id,
+            userId,
+            onUpdated,
+            title: cloth.name,
+          }),
+      },
       { text: "Usuń", style: "destructive", onPress: confirmDelete },
       { text: "Zamknij", style: "cancel" },
     ]);
-  }, [selectionMode, toggleSelect, onEdit, cloth.id, confirmDelete]);
+  }, [
+    selectionMode,
+    toggleSelect,
+    confirmDelete,
+    navigation,
+    cloth.id,
+    cloth.name,
+    userId,
+    onUpdated,
+  ]);
 
   return (
     <Card
@@ -101,13 +149,7 @@ export default function ClothCard({
         <Name numberOfLines={1}>{cloth.name}</Name>
         <MenuBtn
           accessibilityLabel="Menu akcji"
-          onPress={() => {
-            Alert.alert("Akcje", "", [
-              { text: "Edytuj", onPress: () => onEdit?.(cloth.id) },
-              { text: "Usuń", style: "destructive", onPress: confirmDelete },
-              { text: "Zamknij", style: "cancel" },
-            ]);
-          }}
+          onPress={openActions}
           disabled={loading || selectionMode}
         >
           {loading ? (

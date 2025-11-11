@@ -11,7 +11,7 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
 ## 3. Wymagania funkcjonalne
 
 1. Dodawanie ubrań poprzez wykonywanie zdjęć (możliwość wielokrotnych zdjęć na jeden element)
-2. Ręczne oraz automatyczne (AI) kategoryzowanie ubrań
+2. Ręczne oraz automatyczne (AI) (po MVP) kategoryzowanie ubrań
 3. Edycja, przeglądanie i usuwanie ubrań oraz kategorii
 4. Obsługa atrybutów (atrybuty nie są wymagane): kolor, rozmiar, marka, sezon, lokalizacja
 5. Mechanizm tagowania wielowartościowego oraz możliwość edycji kategorii/tagów przez użytkownika
@@ -41,9 +41,9 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
 - Kryteria akceptacji:
   - Ubranie posiada co najmniej jedno zdjęcie
   - Możliwość dodania wielu zdjęć
-  - Możliwość przypisania kategorii/atrybutów ręcznie lub przez AI
+  - Możliwość przypisania kategorii/atrybutów ręcznie lub przez AI po MVP
 
-### US-002: Kategoryzacja AI
+### US-002: Kategoryzacja AI po MVP
 
 - Tytuł: Automatyczna kategoryzacja przez AI
 - Opis: Jako użytkownik chcę, by aplikacja automatycznie sugerowała kategorię i atrybuty ubrania, abym mógł je zaakceptować lub poprawić jednym tapnięciem.
@@ -88,13 +88,13 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
 ### US-008: Obsługa konta użytkownika i bezpieczeństwo
 
 - Tytuł: Bezpieczna rejestracja, logowanie i przechowywanie danych
-- Opis: Jako użytkownik chcę zacząć w trybie gościa, a następnie przejść do konta (e-mail/magic link) bez utraty danych, z zachowaniem pełnego bezpieczeństwa i prywatności.
+- Opis: Jako użytkownik chcę zacząć w trybie gościa, a następnie przejść do konta (e-mail/magic link) - po MVP bez utraty danych, z zachowaniem pełnego bezpieczeństwa i prywatności.
 - Kryteria akceptacji:
   - Tryb gościa z możliwością migracji na konto
   - Szyfrowanie danych lokalnie i w tranzycie
-  - Magic link/mail do logowania
+  - Magic link/mail do logowania - po MVP
 
-### US-009: Zgody, prywatność, usuwanie danych
+### US-009: Zgody, prywatność, usuwanie danych - po MVP
 
 - Tytuł: Zarządzanie zgodami i prywatnością
 - Opis: Jako użytkownik chcę mieć wyraźny wybór co do udziału w trenowaniu modeli AI oraz możliwość twardego usunięcia moich danych.

@@ -1,32 +1,22 @@
 // src/api/Cloth/Infrastructure/ClothRepository.ts
 import { getDb } from "../../../db/database";
 import { Logger } from "../../Kernel/Logger";
-import { Cloth } from "../Domain/Cloth";
+import type { Cloth, NewClothWithPhotoDraft } from "../Domain/Cloth";
 
-/** INSERT (jak miałeś) + logi po COMMIT */
-type NewClothWithPhotoPayload = {
-  user_id: string; // UUID (TEXT)
-  file_path: string; // file://...
-  hash: string;
-  main?: 0 | 1;
-  name?: string;
-  description?: string | null;
-};
-
-export async function insertClothWithPhoto(p: NewClothWithPhotoPayload) {
+export async function insertClothWithPhoto(p: NewClothWithPhotoDraft) {
   const db = await getDb();
   const now = Date.now();
 
   // upewnij się, że user istnieje (idempotentnie)
   const u = await db.getFirstAsync<{ id: string }>(
     "SELECT id FROM users WHERE id = ? LIMIT 1",
-    [p.user_id]
+    [p.userId]
   );
   if (!u?.id) {
     await db.runAsync(
       `INSERT INTO users (id, kind, role, created_at, updated_at)
        VALUES (?, 'guest', 'ROLE_USER', ?, ?)`,
-      [p.user_id, now, now]
+      [p.userId, now, now]
     );
   }
 
@@ -35,7 +25,7 @@ export async function insertClothWithPhoto(p: NewClothWithPhotoPayload) {
     await db.runAsync(
       `INSERT INTO cloth (user_id, name, description, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?)`,
-      [p.user_id, p.name ?? "Nowe ubranie", p.description ?? null, now, now]
+      [p.userId, p.name ?? "Nowe ubranie", p.description ?? null, now, now]
     );
 
     const { id: clothId } = (await db.getFirstAsync<{ id: number }>(
@@ -45,7 +35,7 @@ export async function insertClothWithPhoto(p: NewClothWithPhotoPayload) {
     await db.runAsync(
       `INSERT INTO cloth_photos (cloth_id, user_id, file_path, hash, main, created_at)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [clothId, p.user_id, p.file_path, p.hash, p.main ?? 1, now]
+      [clothId, p.userId, p.filePath, p.hash, p.main ?? 1, now]
     );
 
     await db.execAsync("COMMIT");
@@ -308,16 +298,6 @@ export type GetAllClothsSort =
   | "name:asc"
   | "name:desc";
 
-export type ClothListItem = {
-  id: number;
-  user_id: string;
-  name: string;
-  description: string | null;
-  created_at: number;
-  updated_at: number;
-  thumbUrl?: string;
-};
-
 export async function getAllCloths({
   userId,
   limit = 120,
@@ -328,7 +308,7 @@ export async function getAllCloths({
   limit?: number;
   offset?: number;
   sort?: GetAllClothsSort;
-} = {}): Promise<ClothListItem[]> {
+} = {}): Promise<Cloth[]> {
   const t0 = Date.now();
   const db = await getDb();
 
@@ -367,7 +347,7 @@ export async function getAllCloths({
   const params = userId ? [userId, limit, offset] : [limit, offset];
   const rows = await db.getAllAsync<{
     id: number;
-    user_id: string;
+    userId: string;
     name: string;
     description: string | null;
     created_at: number;
@@ -375,10 +355,10 @@ export async function getAllCloths({
     thumb_path?: string | null;
   }>(sql, params);
 
-  const result: ClothListItem[] =
+  const result: Cloth[] =
     (rows ?? []).map((r) => ({
       id: r.id,
-      user_id: r.user_id,
+      userId: r.userId,
       name: r.name,
       description: r.description,
       created_at: r.created_at,
@@ -397,4 +377,247 @@ export async function getAllCloths({
   });
 
   return result;
+}
+
+export async function updateCloth(
+  clothId: number,
+  patch: {
+    description?: string;
+    color?: string;
+    brand?: string;
+    location?: string;
+  },
+  userId?: string
+): Promise<{
+  clothId: number;
+  description?: string;
+  color?: string;
+  brand?: string;
+  location?: string;
+  updatedAt: string; // ISO dla UI
+} | null> {
+  const db = await getDb();
+
+  // 1) Zbuduj SET zanim ruszysz transakcję
+  const sets: string[] = [];
+  const args: any[] = [];
+
+  if (typeof patch.description !== "undefined") {
+    sets.push("description = ?");
+    args.push(patch.description);
+  }
+  if (typeof patch.color !== "undefined") {
+    sets.push("color = ?");
+    args.push(patch.color);
+  }
+  if (typeof patch.brand !== "undefined") {
+    sets.push("brand = ?");
+    args.push(patch.brand);
+  }
+  if (typeof patch.location !== "undefined") {
+    sets.push("location = ?");
+    args.push(patch.location);
+  }
+
+  if (sets.length === 0) {
+    Logger.warn("ClothRepository.updateCloth: empty patch", {
+      clothId,
+      userId,
+    });
+    return null;
+  }
+
+  // 2) Ustal updated_at jako INTEGER (epoch ms)
+  const nowMs = Date.now();
+  sets.push("updated_at = ?");
+  args.push(nowMs);
+
+  const whereGate = userId ? " AND user_id = ?" : "";
+  const sql = `UPDATE cloth SET ${sets.join(", ")} WHERE id = ?${whereGate}`;
+  args.push(clothId);
+  if (userId) args.push(userId);
+
+  let committed = false;
+  await db.execAsync("BEGIN"); // lub "BEGIN IMMEDIATE"
+
+  try {
+    const res = await db.runAsync(sql, args);
+    const affected = (res as any)?.changes ?? 0;
+
+    await db.execAsync("COMMIT");
+    committed = true;
+
+    if (affected === 0) {
+      Logger.warn("ClothRepository.updateCloth: no rows affected", {
+        clothId,
+        userId,
+      });
+      return null;
+    }
+  } catch (e) {
+    if (!committed) {
+      // ROLLBACK tylko jeśli transakcja wciąż otwarta
+      try {
+        await db.execAsync("ROLLBACK");
+      } catch {}
+    }
+    Logger.error("ClothRepository.updateCloth: error", {
+      clothId,
+      userId,
+      error: String(e),
+    });
+    throw e;
+  }
+
+  // 3) Post-commit SELECT poza blokiem transakcji + z aliasami
+  const whereSelectGate = userId ? " AND user_id = ?" : "";
+  const row = await db.getFirstAsync<{
+    id: number;
+    description: string | null;
+    color: string | null;
+    brand: string | null;
+    location: string | null;
+    updatedAt: number; // alias z updated_at
+  }>(
+    `
+    SELECT
+      id,
+      description,
+      color,
+      brand,
+      location,
+      updated_at AS updatedAt
+    FROM cloth
+    WHERE id = ?${whereSelectGate}
+    `,
+    userId ? [clothId, userId] : [clothId]
+  );
+
+  Logger.info("Repo committed cloth update", { clothId });
+
+  if (!row) return null;
+
+  return {
+    clothId: row.id,
+    description: row.description ?? undefined,
+    color: row.color ?? undefined,
+    brand: row.brand ?? undefined,
+    location: row.location ?? undefined,
+    updatedAt: new Date(row.updatedAt).toISOString(), // konwersja ms -> ISO
+  };
+}
+
+type ClothRow = {
+  id: number;
+  userId: string;
+  name: string;
+  description: string | null;
+  brand: string | null;
+  color: string | null;
+  season: string | null;
+  location: string | null;
+  createdAt: number; // masz INTEGER w DB
+  updatedAt: number;
+  categoryId: number | null;
+};
+
+export async function getClothById({
+  userId,
+  id,
+}: {
+  userId: string;
+  id: number;
+}): Promise<Cloth | undefined> {
+  const db = await getDb();
+  const t0 = Date.now();
+
+  const whereUser = userId ? " AND c.user_id = ?" : "";
+  const clothRow = await db.getFirstAsync<ClothRow>(
+    `
+    SELECT
+      c.id            AS id,
+      c.user_id       AS userId,
+      c.name          AS name,
+      c.description   AS description,
+      c.brand         AS brand,
+      c.color         AS color,
+      c.season        AS season,
+      c.location      AS location,
+      c.created_at    AS createdAt,
+      c.updated_at    AS updatedAt,
+      c.category_id   AS categoryId
+    FROM cloth c
+    WHERE c.deleted_at IS NULL
+      AND c.id = ?${whereUser}
+    LIMIT 1
+    `,
+    userId ? [id, userId] : [id]
+  );
+
+  if (!clothRow) {
+    Logger.info("ClothRepository.getClothById", {
+      elapsedMs: Date.now() - t0,
+      userId,
+      id,
+      hit: false,
+    });
+    return undefined;
+  }
+
+  // --- Kategoria (opcjonalna; tabela: categories) ---
+  let category: Cloth["category"] = null;
+  if (clothRow.categoryId != null) {
+    const cat = await db.getFirstAsync<{ id: number; name: string }>(
+      `
+      SELECT id, name
+      FROM categories
+      WHERE id = ?
+        AND deleted_at IS NULL
+        AND user_id = ?
+      LIMIT 1
+      `,
+      [clothRow.categoryId, clothRow.userId]
+    );
+    if (cat) category = { id: cat.id, name: cat.name };
+  }
+
+  // --- Tagi (opcjonalne; tabele: tags + cloth_tags) ---
+  const tags =
+    (await db.getAllAsync<{ id: number; name: string }>(
+      `
+      SELECT t.id AS id, t.name AS name
+        FROM cloth_tags ct
+        JOIN tags t ON t.id = ct.tag_id
+       WHERE ct.cloth_id = ?
+         AND t.user_id = ?
+      ORDER BY t.name COLLATE NOCASE ASC
+      `,
+      [clothRow.id, clothRow.userId]
+    )) ?? [];
+
+  const entity: Cloth = {
+    id: clothRow.id,
+    userId: clothRow.userId,
+    name: clothRow.name,
+    description: clothRow.description ?? null,
+    brand: clothRow.brand ?? null,
+    color: clothRow.color ?? null,
+    season: clothRow.season ?? null,
+    location: clothRow.location ?? null,
+    category, // null kiedy brak kategorii
+    tags, // [] kiedy brak tagów
+    createdAt: clothRow.createdAt,
+    updatedAt: clothRow.updatedAt,
+  };
+
+  Logger.info("ClothRepository.getClothById", {
+    elapsedMs: Date.now() - t0,
+    userId,
+    id,
+    hit: true,
+    hasCategory: !!category,
+    tags: tags.length,
+  });
+
+  return entity;
 }

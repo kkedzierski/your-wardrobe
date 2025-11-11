@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import styled from "styled-components/native";
-import { DeleteClothController } from "../api/Cloth/Ui/REST/DELETE/DeleteCloth/DeleteClothController";
+import { deleteCloth } from "../api/Cloth/Ui/REST/DELETE/DeleteCloth/DeleteClothController";
 import { showNoticeForApi } from "../ui/apiNotice";
 
 type Props = {
@@ -20,11 +20,10 @@ export default function DeleteClothButton({
 
   const onPress = async () => {
     setLoading(true);
-    const res = await DeleteClothController({ clothId, userId });
+    const res = await deleteCloth({ clothId, userId });
     setLoading(false);
 
     showNoticeForApi(res, {
-      // EN zdania – trafią do pl.json i będą tłumaczone po zdaniu
       titleSuccess: "Done",
       fallbackSuccessMsg: "Cloth deleted.",
       titleError: "Couldn't remove cloth",

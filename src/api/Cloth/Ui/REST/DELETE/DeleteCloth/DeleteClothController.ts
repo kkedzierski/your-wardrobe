@@ -12,7 +12,7 @@ const M = {
   SUCCESS: "Cloth deleted.",
 };
 
-export async function DeleteClothController(input: DeleteClothInput) {
+export async function deleteCloth(input: DeleteClothInput) {
   try {
     if (!input?.clothId || input.clothId <= 0) {
       return Api.error(ApiErrorCode.BAD_REQUEST, M.BAD_INPUT);

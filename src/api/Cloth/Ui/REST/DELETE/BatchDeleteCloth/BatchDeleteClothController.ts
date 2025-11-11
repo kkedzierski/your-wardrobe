@@ -16,9 +16,7 @@ const M = {
   PARTIAL: "Some clothes were not found and were not deleted.",
 };
 
-export async function BatchDeleteClothController(
-  input: BatchDeleteClothInput
-): Promise<
+export async function batchDeleteCloths(input: BatchDeleteClothInput): Promise<
   ApiResponse<{
     deletedCount: number;
     deletedIds: number[];

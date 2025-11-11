@@ -7,6 +7,8 @@ import MainTabs from "./MainTabs";
 import ProfileScreen from "../screens/Settings/ProfileScreen";
 import SyncSettingsScreen from "../screens/Settings/SyncSettingsScreen";
 import LoginOptionsScreen from "../screens/Settings/LoginOptionsScreen";
+import EditClothScreen from "../screens/EditClothScreen";
+import ShowClothScreen from "../screens/showClothScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -14,6 +16,8 @@ export type RootStackParamList = {
   Profile: undefined;
   SyncSettings: undefined;
   LoginOptions: undefined;
+  EditCloth: undefined;
+  ShowCloth: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -46,6 +50,16 @@ export default function RootNavigator() {
           name="LoginOptions"
           component={LoginOptionsScreen}
           options={{ headerShown: true, title: "Logowanie" }}
+        />
+        <Stack.Screen
+          name="EditCloth"
+          component={EditClothScreen}
+          options={{ headerShown: true, title: "Edycja ubrania" }}
+        />
+        <Stack.Screen
+          name="ShowCloth"
+          component={ShowClothScreen}
+          options={{ headerShown: true, title: "Szczegóły ubrania" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

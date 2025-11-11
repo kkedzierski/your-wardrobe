@@ -1,5 +1,6 @@
 // src/api/Kernel/ApiResponse.ts
 export const ApiErrorCode = {
+  VALIDATION_ERROR: "VALIDATION_ERROR",
   BAD_REQUEST: "BAD_REQUEST",
   NOT_FOUND: "NOT_FOUND",
   CONFLICT: "CONFLICT",

@@ -1,5 +1,3 @@
-📌 PROMPT SZABLON — komponent + endpoint (React-Native + warstwy domenowe)
-
 Cel: Na podstawie poniższych wytycznych wygeneruj kompletny zestaw plików (z minimalnym, działającym kodem) dla funkcjonalności {OPIS FUNKCJONALNOŚCI} w domenie {DOMENA}.
 
 Kontekst projektu (stałe)
