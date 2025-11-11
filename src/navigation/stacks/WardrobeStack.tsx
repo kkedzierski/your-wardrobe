@@ -1,7 +1,7 @@
 // src/navigation/stacks/WardrobeStack.tsx
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import WardrobeScreen from "../../screens/WardrobeScreen";
+import WardrobeScreen from "../../screens/Cloth/WardrobeScreen";
 // przykładowe szczegóły/edycja:
 function WardrobeDetailsScreen() {
   return null;

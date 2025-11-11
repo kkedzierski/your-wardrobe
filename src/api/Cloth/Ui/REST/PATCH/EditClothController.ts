@@ -20,10 +20,13 @@ export async function editCloth(input: EditClothInput) {
       clothId: input.clothId,
       userId: input.userId,
       patch: {
+        name: input.name,
         description: input.description,
         color: input.color,
         brand: input.brand,
         location: input.location,
+        categoryId: input.categoryId,
+        tagIds: input.tagIds,
       },
     });
 

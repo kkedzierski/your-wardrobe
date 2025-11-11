@@ -13,7 +13,6 @@ export async function getClothItem(
   input: Partial<GetClothItemInput>
 ): Promise<ApiResponse<GetClothItemOutput>> {
   try {
-    // Minimalna walidacja wejścia
     const idNum = Number(input?.id);
     if (!Number.isFinite(idNum) || idNum <= 0) {
       return Api.error(
@@ -23,13 +22,9 @@ export async function getClothItem(
     }
 
     const userId = await getActiveUserId();
-
     const item = await getClothById({ userId, id: idNum });
-    if (!item) {
-      return Api.error(ApiErrorCode.NOT_FOUND, "Cloth not found.");
-    }
+    if (!item) return Api.error(ApiErrorCode.NOT_FOUND, "Cloth not found.");
 
-    // Mapowanie do kontraktu Output
     const data: GetClothItemOutput = {
       id: item.id,
       name: item.name,
@@ -38,6 +33,18 @@ export async function getClothItem(
       color: item.color ?? null,
       season: item.season ?? null,
       location: item.location ?? null,
+
+      // NEW 👇
+      thumbUrl: (item as any).thumbUrl ?? null,
+      photos: Array.isArray((item as any).photos)
+        ? (item as any).photos.map((p: any) => ({
+            id: p.id,
+            url: p.url,
+            main: !!p.main,
+            createdAt: p.createdAt,
+          }))
+        : [],
+
       category: item.category
         ? { id: item.category.id, name: item.category.name }
         : null,
@@ -47,7 +54,6 @@ export async function getClothItem(
     return Api.ok<GetClothItemOutput>(data);
   } catch (error) {
     Logger.error("Cloth/GetClothItemController", error);
-    // EN, bez translacji tutaj
     return Api.error(ApiErrorCode.INTERNAL, "Failed to get cloth.");
   }
 }

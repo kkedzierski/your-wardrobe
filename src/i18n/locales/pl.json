@@ -45,5 +45,7 @@
   "Failed to load clothes.": "Nie udało się wczytać ubrań.",
   "Failed to load outfits.": "Nie udało się wczytać outfittów.",
   "Failed to load users.": "Nie udało się wczytać użytkowników.",
-  "Failed to load photos.": "Nie udało się wczytać zdjęć."
+  "Failed to load photos.": "Nie udało się wczytać zdjęć.",
+  "e.g. T-shirt": "np. koszula",
+  "New Cloth": "Nowe ubranie"
 }

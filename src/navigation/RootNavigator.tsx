@@ -7,8 +7,14 @@ import MainTabs from "./MainTabs";
 import ProfileScreen from "../screens/Settings/ProfileScreen";
 import SyncSettingsScreen from "../screens/Settings/SyncSettingsScreen";
 import LoginOptionsScreen from "../screens/Settings/LoginOptionsScreen";
-import EditClothScreen from "../screens/EditClothScreen";
-import ShowClothScreen from "../screens/showClothScreen";
+import EditClothScreen from "../screens/Cloth/EditClothScreen";
+import AddCategoryScreen from "../screens/Category/AddCategoryScreen";
+import ShowClothScreen from "../screens/Cloth/ShowClothScreen";
+import EditCategoryScreen from "../screens/Category/EditCategoryScreen";
+import CategoryManagerScreen from "../screens/Category/CategoryManagerScreen";
+import AddTagScreen from "../screens/Tag/AddTagScreen";
+import EditTagScreen from "../screens/Tag/EditTagScreen";
+import TagManagerScreen from "../screens/Tag/TagManagerScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -18,6 +24,12 @@ export type RootStackParamList = {
   LoginOptions: undefined;
   EditCloth: undefined;
   ShowCloth: undefined;
+  AddCategory: undefined;
+  EditCategory: undefined;
+  CategoryManager: undefined;
+  AddTag: undefined;
+  EditTag: undefined;
+  TagManager: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -60,6 +72,36 @@ export default function RootNavigator() {
           name="ShowCloth"
           component={ShowClothScreen}
           options={{ headerShown: true, title: "Szczegóły ubrania" }}
+        />
+        <Stack.Screen
+          name="AddCategory"
+          component={AddCategoryScreen}
+          options={{ headerShown: true, title: "Dodawanie kategorii" }}
+        />
+        <Stack.Screen
+          name="EditCategory"
+          component={EditCategoryScreen}
+          options={{ headerShown: true, title: "Edycja kategorii" }}
+        />
+        <Stack.Screen
+          name="CategoryManager"
+          component={CategoryManagerScreen}
+          options={{ headerShown: true, title: "Zarządzanie kategoriami" }}
+        />
+        <Stack.Screen
+          name="AddTag"
+          component={AddTagScreen}
+          options={{ headerShown: true, title: "Dodawanie tagu" }}
+        />
+        <Stack.Screen
+          name="EditTag"
+          component={EditTagScreen}
+          options={{ headerShown: true, title: "Edycja tagu" }}
+        />
+        <Stack.Screen
+          name="TagManager"
+          component={TagManagerScreen}
+          options={{ headerShown: true, title: "Zarządzanie tagami" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

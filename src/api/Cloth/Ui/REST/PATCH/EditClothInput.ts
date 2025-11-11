@@ -4,11 +4,11 @@
 export type EditClothInput = {
   clothId: number; // wymagane
   userId?: string; // wymagane
+  name?: string;
   description?: string;
   color?: string;
   brand?: string;
   location?: string;
-  // future:
-  categoryIds?: string[];
-  tagIds?: string[];
+  categoryId: number;
+  tagIds?: number[];
 };

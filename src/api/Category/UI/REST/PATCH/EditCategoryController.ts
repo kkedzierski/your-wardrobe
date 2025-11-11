@@ -1,5 +1,5 @@
-import { Api, ApiErrorCode } from "../../../../../Kernel/ApiResponse";
-import { processEditCategory } from "../../../../Application/Services/EditCategoryHandler";
+import { Api, ApiErrorCode } from "../../../../Kernel/ApiResponse";
+import { processEditCategory } from "../../../Application/Services/EditCategoryHandler";
 import { EditCategoryInput } from "./EditCategoryInput";
 
 const M = {

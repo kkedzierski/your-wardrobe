@@ -1,5 +1,5 @@
 import { getActiveUserId } from "../../../../auth/ensureGuestUser";
-import { insertCategory } from "../../Category/Infrastructure/CategoryRepository";
+import { insertCategory } from "../../Infrastructure/CategoryRepository";
 import { CreateCategoryCommand } from "../Commands/CreateCategoryCommand";
 import { CreateCategoryDTO } from "../Commands/CreateCategoryDTO";
 

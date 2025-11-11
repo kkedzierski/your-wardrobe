@@ -7,6 +7,8 @@ export type GetClothItemOutput = {
   color?: string | null;
   season?: string | null;
   location?: string | null;
+  thumbUrl?: string | null;
+  photos?: { id: number; url: string; main: boolean; createdAt: number }[];
   category?: {
     id: number;
     name: string;

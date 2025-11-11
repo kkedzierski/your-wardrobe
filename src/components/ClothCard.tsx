@@ -14,6 +14,7 @@ type Props = {
   onDeleted?: (clothId: number) => void;
   onUpdated?: (payload: {
     clothId: number;
+    name?: string;
     description?: string;
     color?: string;
     brand?: string;
@@ -92,7 +93,7 @@ export default function ClothCard({
       {
         text: "Podgląd",
         onPress: () =>
-          navigation.navigate("EditCloth", {
+          navigation.navigate("ShowCloth", {
             clothId: cloth.id,
             title: cloth.name,
           }),

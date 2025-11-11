@@ -378,30 +378,37 @@ export async function getAllCloths({
 
   return result;
 }
-
 export async function updateCloth(
   clothId: number,
   patch: {
+    name?: string;
     description?: string;
     color?: string;
     brand?: string;
     location?: string;
+    categoryId?: number;
+    // UWAGA: tu nie przetwarzamy tagów
   },
   userId?: string
 ): Promise<{
   clothId: number;
+  name?: string;
   description?: string;
   color?: string;
   brand?: string;
   location?: string;
-  updatedAt: string; // ISO dla UI
+  categoryId?: number;
+  updatedAt: string;
 } | null> {
   const db = await getDb();
 
-  // 1) Zbuduj SET zanim ruszysz transakcję
   const sets: string[] = [];
   const args: any[] = [];
 
+  if (typeof patch.name !== "undefined") {
+    sets.push("name = ?");
+    args.push(patch.name);
+  }
   if (typeof patch.description !== "undefined") {
     sets.push("description = ?");
     args.push(patch.description);
@@ -418,6 +425,10 @@ export async function updateCloth(
     sets.push("location = ?");
     args.push(patch.location);
   }
+  if (typeof patch.categoryId !== "undefined") {
+    sets.push("category_id = ?");
+    args.push(patch.categoryId);
+  }
 
   if (sets.length === 0) {
     Logger.warn("ClothRepository.updateCloth: empty patch", {
@@ -427,7 +438,6 @@ export async function updateCloth(
     return null;
   }
 
-  // 2) Ustal updated_at jako INTEGER (epoch ms)
   const nowMs = Date.now();
   sets.push("updated_at = ?");
   args.push(nowMs);
@@ -438,15 +448,12 @@ export async function updateCloth(
   if (userId) args.push(userId);
 
   let committed = false;
-  await db.execAsync("BEGIN"); // lub "BEGIN IMMEDIATE"
-
+  await db.execAsync("BEGIN");
   try {
     const res = await db.runAsync(sql, args);
     const affected = (res as any)?.changes ?? 0;
-
     await db.execAsync("COMMIT");
     committed = true;
-
     if (affected === 0) {
       Logger.warn("ClothRepository.updateCloth: no rows affected", {
         clothId,
@@ -456,7 +463,6 @@ export async function updateCloth(
     }
   } catch (e) {
     if (!committed) {
-      // ROLLBACK tylko jeśli transakcja wciąż otwarta
       try {
         await db.execAsync("ROLLBACK");
       } catch {}
@@ -469,23 +475,26 @@ export async function updateCloth(
     throw e;
   }
 
-  // 3) Post-commit SELECT poza blokiem transakcji + z aliasami
   const whereSelectGate = userId ? " AND user_id = ?" : "";
   const row = await db.getFirstAsync<{
     id: number;
+    name: string | null;
     description: string | null;
     color: string | null;
     brand: string | null;
     location: string | null;
-    updatedAt: number; // alias z updated_at
+    categoryId: number | null;
+    updatedAt: number;
   }>(
     `
     SELECT
       id,
+      name,
       description,
       color,
       brand,
       location,
+      category_id AS categoryId,
       updated_at AS updatedAt
     FROM cloth
     WHERE id = ?${whereSelectGate}
@@ -493,17 +502,17 @@ export async function updateCloth(
     userId ? [clothId, userId] : [clothId]
   );
 
-  Logger.info("Repo committed cloth update", { clothId });
-
   if (!row) return null;
 
   return {
     clothId: row.id,
+    name: row.name ?? undefined,
     description: row.description ?? undefined,
     color: row.color ?? undefined,
     brand: row.brand ?? undefined,
     location: row.location ?? undefined,
-    updatedAt: new Date(row.updatedAt).toISOString(), // konwersja ms -> ISO
+    categoryId: row.categoryId ?? undefined,
+    updatedAt: new Date(row.updatedAt).toISOString(),
   };
 }
 
@@ -595,6 +604,42 @@ export async function getClothById({
       [clothRow.id, clothRow.userId]
     )) ?? [];
 
+  const mainPhoto = await db.getFirstAsync<{ file_path: string | null }>(
+    `
+      SELECT p.file_path
+        FROM cloth_photos p
+       WHERE p.cloth_id = ?
+         AND (p.deleted_at IS NULL OR p.deleted_at IS NULL)
+    ORDER BY p.main DESC, p.created_at DESC, p.id DESC
+       LIMIT 1
+      `,
+    [clothRow.id]
+  );
+
+  const photoRows =
+    (await db.getAllAsync<{
+      id: number;
+      file_path: string;
+      main: number;
+      created_at: number;
+    }>(
+      `
+      SELECT id, file_path, main, created_at
+        FROM cloth_photos
+       WHERE cloth_id = ?
+         AND (deleted_at IS NULL OR deleted_at IS NULL)
+    ORDER BY main DESC, created_at DESC, id DESC
+      `,
+      [clothRow.id]
+    )) ?? [];
+
+  const photos = photoRows.map((r) => ({
+    id: r.id,
+    url: r.file_path, // zachowujemy tak jak w liście (file_path)
+    main: !!r.main,
+    createdAt: r.created_at,
+  }));
+
   const entity: Cloth = {
     id: clothRow.id,
     userId: clothRow.userId,
@@ -604,11 +649,15 @@ export async function getClothById({
     color: clothRow.color ?? null,
     season: clothRow.season ?? null,
     location: clothRow.location ?? null,
-    category, // null kiedy brak kategorii
-    tags, // [] kiedy brak tagów
+    category,
+    tags,
     createdAt: clothRow.createdAt,
     updatedAt: clothRow.updatedAt,
-  };
+
+    // NEW 👇 dopisz te pola do typu domenowego Cloth, albo zwróć „as any”
+    thumbUrl: mainPhoto?.file_path ?? undefined,
+    photos,
+  } as any;
 
   Logger.info("ClothRepository.getClothById", {
     elapsedMs: Date.now() - t0,
@@ -617,7 +666,66 @@ export async function getClothById({
     hit: true,
     hasCategory: !!category,
     tags: tags.length,
+    hasPhoto: !!mainPhoto?.file_path,
+    photosCount: photos.length,
   });
 
   return entity;
+}
+
+export async function replaceClothTags(
+  clothId: number,
+  tagIds: number[],
+  userId?: string
+): Promise<void> {
+  const db = await getDb();
+  const uniqueIds = Array.from(
+    new Set((tagIds || []).filter((n) => Number.isFinite(n) && n > 0))
+  );
+
+  await db.execAsync("BEGIN");
+  try {
+    // 1) Usuń obecne powiązania
+    await db.runAsync(`DELETE FROM cloth_tags WHERE cloth_id = ?`, [clothId]);
+
+    if (uniqueIds.length > 0) {
+      // (opcjonalnie) Walidacja, że tagi należą do tego samego usera:
+      if (userId) {
+        const placeholders = uniqueIds.map(() => "?").join(",");
+        const rows = await db.getAllAsync<{ id: number }>(
+          `SELECT id FROM tags WHERE id IN (${placeholders}) AND user_id = ?`,
+          [...uniqueIds, userId]
+        );
+        const valid = new Set(rows?.map((r) => r.id) ?? []);
+        const filtered = uniqueIds.filter((id) => valid.has(id));
+        // 2) Wstaw tylko zweryfikowane
+        for (const tid of filtered) {
+          await db.runAsync(
+            `INSERT OR IGNORE INTO cloth_tags (cloth_id, tag_id) VALUES (?, ?)`,
+            [clothId, tid]
+          );
+        }
+      } else {
+        // Bez walidacji usera
+        for (const tid of uniqueIds) {
+          await db.runAsync(
+            `INSERT OR IGNORE INTO cloth_tags (cloth_id, tag_id) VALUES (?, ?)`,
+            [clothId, tid]
+          );
+        }
+      }
+    }
+
+    await db.execAsync("COMMIT");
+  } catch (e) {
+    try {
+      await db.execAsync("ROLLBACK");
+    } catch {}
+    Logger.error("ClothRepository.replaceClothTags: error", {
+      clothId,
+      userId,
+      error: String(e),
+    });
+    throw e;
+  }
 }
