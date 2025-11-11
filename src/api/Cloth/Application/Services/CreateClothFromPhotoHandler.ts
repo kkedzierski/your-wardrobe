@@ -24,7 +24,7 @@ export async function createClothFromPhoto(
 
   // 3) DB
   const userUuid = await getActiveUserId();
-  const clothId = await insertClothWithPhoto({
+  const { clothId } = await insertClothWithPhoto({
     user_id: userUuid,
     file_path: saved.destUri,
     hash,

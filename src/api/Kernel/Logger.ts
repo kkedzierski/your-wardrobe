@@ -7,4 +7,7 @@ export const Logger = {
   error(ctx: string, payload?: unknown, note?: string) {
     console.error(`[${ctx}]`, payload ?? "", note ?? "");
   },
+  info(ctx: string, payload?: unknown, note?: string) {
+    console.info(`[${ctx}]`, payload ?? "", note ?? "");
+  },
 };

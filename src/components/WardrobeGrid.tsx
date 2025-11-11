@@ -1,182 +1,288 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+// src/components/WardrobeGrid.tsx
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
-  Dimensions,
-  RefreshControl,
   FlatList,
+  ListRenderItem,
+  RefreshControl,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import styled from "styled-components/native";
-import { getActiveUserId } from "../auth/ensureGuestUser";
-import {
-  fetchWardrobePhotosAll,
-  WardrobePhoto,
-} from "../api/Cloth/Infrastructure/ClothRepository";
-import { useFocusEffect } from "@react-navigation/native";
+import ClothCard from "./ClothCard";
+import { getClothesCollection } from "../api/Cloth/Ui/REST/GET/GetClothesCollection/GetClothesCollectionOutputController";
+import { BatchDeleteClothController } from "../api/Cloth/Ui/REST/DELETE/BatchDeleteCloth/BatchDeleteClothController";
+import { showNoticeForApi } from "../ui/apiNotice";
 import { EventBus, EVENTS } from "../events/bus";
 
-const GAP = 8;
-const NUM_COLUMNS = 3;
+export type Cloth = {
+  id: number;
+  name: string;
+  thumbUrl?: string;
+};
 
-export default function WardrobeGrid() {
-  const [data, setData] = useState<WardrobePhoto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export type WardrobeGridHandle = {
+  reload: () => Promise<void>;
+};
 
-  const itemSize = useMemo(() => {
-    const width = Dimensions.get("window").width;
-    const horizontalPadding = 32; // 16 + 16 z ekranu
-    const totalGap = GAP * (NUM_COLUMNS - 1);
-    const usable = width - horizontalPadding - totalGap;
-    return Math.floor(usable / NUM_COLUMNS);
-  }, []);
+type Props = {
+  userId?: string;
+};
 
-  const load = useCallback(async () => {
-    try {
-      setError(null);
-      await getActiveUserId(); // jeśli chcesz filtrować po userId, pobierz tu
-      const rows = await fetchWardrobePhotosAll();
-      setData(rows);
-    } catch (e: any) {
-      setError(e?.message ?? "Nie udało się pobrać zdjęć.");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
+const GAP = 16;
+const COLUMNS = 2;
 
-  useFocusEffect(
-    useCallback(() => {
-      load();
-      return () => {};
-    }, [load])
-  );
+const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
+  function WardrobeGrid({ userId }: Props, ref) {
+    const [items, setItems] = useState<Cloth[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+    // ===== zaznaczanie
+    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const selectionMode = selectedIds.length > 0;
 
-  useEffect(() => {
-    const off = EventBus.on(EVENTS.WARDROBE_PHOTO_ADDED, () => {
-      load();
-    });
-    return off; // unsubscribe
-  }, [load]);
+    const { width } = useWindowDimensions();
+    const itemWidth = useMemo(() => {
+      const horizontalPadding = 16 * 2;
+      const totalGaps = GAP * (COLUMNS - 1);
+      return (width - horizontalPadding - totalGaps) / COLUMNS;
+    }, [width]);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    load();
-  }, [load]);
+    const fetchData = useCallback(async () => {
+      const res = await getClothesCollection({
+        limit: 100,
+        offset: 0,
+        sort: "created_at:desc",
+      });
 
-  if (loading) {
-    return (
-      <Centered>
-        <ActivityIndicator />
-      </Centered>
-    );
-  }
-
-  if (error) {
-    return (
-      <Centered>
-        <InfoText>😕 {error}</InfoText>
-        <Retry onPress={load}>
-          <RetryText>Spróbuj ponownie</RetryText>
-        </Retry>
-      </Centered>
-    );
-  }
-
-  if (!data.length) {
-    return (
-      <EmptyWrap
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <EmptyBox>
-          <EmptyTitle>Brak zdjęć</EmptyTitle>
-          <EmptySub>
-            Dodaj pierwsze ubranie z aparatu, a pojawi się tutaj.
-          </EmptySub>
-        </EmptyBox>
-      </EmptyWrap>
-    );
-  }
-
-  return (
-    <FlatList
-      data={data}
-      keyExtractor={(it) => String(it.id)}
-      numColumns={NUM_COLUMNS}
-      // styl dla wierszy (kolumn) – odstępy między kafelkami
-      columnWrapperStyle={{ gap: GAP }}
-      // styl dla zawartości – dolny padding
-      contentContainerStyle={{ paddingBottom: 24 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      if (res.ok && res.data?.items) {
+        setItems(res.data.items);
+      } else if (!res.ok) {
+        console.warn("Failed to get clothes:", res.message);
       }
-      renderItem={({ item, index }) => (
-        <Tile
-          style={{
-            width: itemSize,
-            height: itemSize,
-            marginTop: index < NUM_COLUMNS ? 0 : GAP,
-          }}
-          accessibilityLabel={`Zdjęcie ubrania #${item.id}`}
-        >
-          <Thumb source={{ uri: item.file_path }} />
-        </Tile>
-      )}
-    />
-  );
-}
+    }, [userId]);
 
-/* === styles === */
-const Tile = styled.View`
-  background: #f3f4f6;
-  border-radius: 12px;
-  overflow: hidden;
-`;
-const Thumb = styled.Image`
-  width: 100%;
-  height: 100%;
-`;
-const Centered = styled.View`
+    const reload = useCallback(async () => {
+      setRefreshing(true);
+      try {
+        await fetchData();
+      } finally {
+        setRefreshing(false);
+      }
+    }, [fetchData]);
+
+    useImperativeHandle(ref, () => ({ reload }), [reload]);
+
+    // pierwszy load
+    useEffect(() => {
+      (async () => {
+        try {
+          await fetchData();
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }, [fetchData]);
+
+    // EventBus → po dodaniu zdjęcia odśwież
+    const firstMountRef = useRef(true);
+    useEffect(() => {
+      const off = EventBus.on(EVENTS.WARDROBE_PHOTO_ADDED, () => {
+        if (firstMountRef.current) return;
+        reload();
+      });
+      firstMountRef.current = false;
+      return () => off();
+    }, [reload]);
+
+    const onRefresh = useCallback(async () => {
+      await reload();
+    }, [reload]);
+
+    // ===== zaznaczanie – logika
+    const toggleSelect = useCallback((clothId: number) => {
+      setSelectedIds((prev) =>
+        prev.includes(clothId)
+          ? prev.filter((id) => id !== clothId)
+          : [...prev, clothId]
+      );
+    }, []);
+    const clearSelection = useCallback(() => setSelectedIds([]), []);
+    const handleDeletedSingle = useCallback((clothId: number) => {
+      setItems((prev) => prev.filter((i) => i.id !== clothId));
+      setSelectedIds((prev) => prev.filter((id) => id !== clothId));
+    }, []);
+
+    const handleBatchDelete = useCallback(async () => {
+      if (selectedIds.length === 0) return;
+
+      const res = await BatchDeleteClothController({
+        clothIds: selectedIds,
+        userId,
+      });
+
+      showNoticeForApi(res, {
+        titleSuccess: "Gotowe",
+        fallbackSuccessMsg:
+          res.ok && res.data?.notFoundIds?.length
+            ? "Niektóre pozycje nie zostały znalezione."
+            : "Zaznaczone ubrania zostały usunięte.",
+        titleError: "Nie udało się usunąć ubrań",
+      });
+
+      if (res.ok) {
+        const toRemove = new Set(res.data?.deletedIds ?? []);
+        setItems((prev) => prev.filter((i) => !toRemove.has(i.id)));
+        clearSelection();
+      }
+    }, [selectedIds, userId, clearSelection]);
+
+    const renderItem: ListRenderItem<Cloth> = ({ item }) => {
+      const isSelected = selectedIds.includes(item.id);
+      return (
+        <View style={{ width: itemWidth, marginBottom: GAP }}>
+          <ClothCard
+            cloth={item}
+            userId={userId}
+            onDeleted={handleDeletedSingle}
+            onEdit={(id) => console.log("Edytuj", id)}
+            selectionMode={selectionMode}
+            selected={isSelected}
+            onToggleSelect={toggleSelect}
+          />
+        </View>
+      );
+    };
+
+    if (loading) {
+      return (
+        <LoadingBox>
+          <ActivityIndicator size="large" />
+        </LoadingBox>
+      );
+    }
+
+    if (!items.length) {
+      return (
+        <EmptyBox accessibilityLabel="Brak ubrań">
+          <EmptyTitle>Tu będzie Twoja garderoba</EmptyTitle>
+          <EmptyText>Dodaj pierwsze ubranie przyciskiem „+”.</EmptyText>
+        </EmptyBox>
+      );
+    }
+
+    return (
+      <GridWrapper>
+        <FlatList
+          data={items}
+          keyExtractor={(item) => String(item.id)}
+          numColumns={COLUMNS}
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+          renderItem={renderItem}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: selectionMode ? 64 : 8 }}
+          extraData={selectedIds} // ⬅ ważne: żeby FlatList przerysował elementy zaznaczenia
+        />
+
+        {selectionMode && (
+          <ActionBar>
+            <ActionBtn
+              onPress={handleBatchDelete}
+              accessibilityLabel="Usuń zaznaczone"
+            >
+              <ActionText>Usuń zaznaczone ({selectedIds.length})</ActionText>
+            </ActionBtn>
+            <ActionBtnSecondary
+              onPress={clearSelection}
+              accessibilityLabel="Anuluj zaznaczanie"
+            >
+              <ActionTextSecondary>Anuluj</ActionTextSecondary>
+            </ActionBtnSecondary>
+          </ActionBar>
+        )}
+      </GridWrapper>
+    );
+  }
+);
+
+export default WardrobeGrid;
+
+// ===== Styled =====
+const GridWrapper = styled.View`
   flex: 1;
+`;
+
+const LoadingBox = styled.View`
+  padding: 20px;
   align-items: center;
   justify-content: center;
 `;
-const InfoText = styled.Text`
+
+const EmptyBox = styled.View`
+  padding: 24px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const EmptyTitle = styled.Text`
+  font-size: 18px;
+  font-weight: 700;
   color: #1b1b1b;
 `;
-const Retry = styled.TouchableOpacity`
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #111;
+
+const EmptyText = styled.Text`
+  margin-top: 8px;
+  color: #666;
 `;
-const RetryText = styled.Text`
+
+const ActionBar = styled.View`
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 10px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  shadow-color: #000;
+  shadow-opacity: 0.1;
+  shadow-radius: 10px;
+  elevation: 4;
+  border: 1px solid #eee;
+`;
+
+const ActionBtn = styled.TouchableOpacity`
+  background: #d32f2f;
+  padding: 10px 14px;
+  border-radius: 10px;
+`;
+
+const ActionText = styled.Text`
   color: #fff;
   font-weight: 700;
 `;
-const EmptyWrap = styled.ScrollView`
-  flex: 1;
+
+const ActionBtnSecondary = styled.TouchableOpacity`
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f2f2f2;
 `;
-const EmptyBox = styled.View`
-  margin-top: 48px;
-  background: #f7f8fb;
-  border-radius: 16px;
-  padding: 16px;
-  align-self: center;
-  width: 90%;
-`;
-const EmptyTitle = styled.Text`
-  font-size: 16px;
-  font-weight: 800;
-  color: #1b1b1b;
-`;
-const EmptySub = styled.Text`
-  color: #6b6b6b;
-  margin-top: 6px;
+
+const ActionTextSecondary = styled.Text`
+  color: #333;
+  font-weight: 600;
 `;

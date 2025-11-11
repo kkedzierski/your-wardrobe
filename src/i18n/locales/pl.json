@@ -6,5 +6,16 @@
   "Photo added to wardrobe.": "Zdjęcie dodane do garderoby.",
   "Error": "Błąd",
   "Operation completed.": "Operacja zakończona.",
-  "Failed to add photo.": "Nie udało się dodać zdjęcia."
+  "Failed to add photo.": "Nie udało się dodać zdjęcia.",
+  "Cloth deleted.": "Usunięto ubranie.",
+  "Couldn't remove cloth": "Nie można usunąć ubrania",
+  "Invalid request.": "Nieprawidłowe żądanie.",
+  "Cloth was not found.": "Nie znaleziono ubrania.",
+  "Failed to delete cloth.": "Nie udało się usunąć ubrania.",
+  "Wardrobe loaded.": "Garderoba wczytana.",
+  "Failed to load wardrobe.": "Nie udało się wczytać garderoby.",
+  "Failed to delete clothes.": "Nie udało się usunąć ubrań.",
+  "Clothes were not found.": "Nie znaleziono ubrań.",
+  "Selected clothes deleted.": "Wybrane ubrania usunięte.",
+  "Some clothes were not found and were not deleted.": "Niektóre ubrania nie zostały znalezione i nie zostały usunięte."
 }

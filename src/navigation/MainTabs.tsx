@@ -82,7 +82,7 @@ export default function MainTabs() {
         name="SettingsTab"
         component={SettingsStack}
         options={{
-          title: "Więcej",
+          title: "Ustawienia",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="cog-outline"
