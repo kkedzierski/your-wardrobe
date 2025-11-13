@@ -15,6 +15,7 @@ import CategoryManagerScreen from "../screens/Category/CategoryManagerScreen";
 import AddTagScreen from "../screens/Tag/AddTagScreen";
 import EditTagScreen from "../screens/Tag/EditTagScreen";
 import TagManagerScreen from "../screens/Tag/TagManagerScreen";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -50,58 +51,91 @@ export default function RootNavigator() {
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
-          options={{ headerShown: true, title: "Profil" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Profile"),
+          }}
         />
 
         <Stack.Screen
           name="SyncSettings"
           component={SyncSettingsScreen}
-          options={{ headerShown: true, title: "Synchronizacja" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Sync Settings"),
+          }}
         />
         <Stack.Screen
           name="LoginOptions"
           component={LoginOptionsScreen}
-          options={{ headerShown: true, title: "Logowanie" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Login"),
+          }}
         />
         <Stack.Screen
           name="EditCloth"
           component={EditClothScreen}
-          options={{ headerShown: true, title: "Edycja ubrania" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Edit Cloth"),
+          }}
         />
         <Stack.Screen
           name="ShowCloth"
           component={ShowClothScreen}
-          options={{ headerShown: true, title: "Szczegóły ubrania" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Cloth Details"),
+          }}
         />
         <Stack.Screen
           name="AddCategory"
           component={AddCategoryScreen}
-          options={{ headerShown: true, title: "Dodawanie kategorii" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Add Category"),
+          }}
         />
         <Stack.Screen
           name="EditCategory"
           component={EditCategoryScreen}
-          options={{ headerShown: true, title: "Edycja kategorii" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Edit Category"),
+          }}
         />
         <Stack.Screen
           name="CategoryManager"
           component={CategoryManagerScreen}
-          options={{ headerShown: true, title: "Zarządzanie kategoriami" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Category Manager"),
+          }}
         />
         <Stack.Screen
           name="AddTag"
           component={AddTagScreen}
-          options={{ headerShown: true, title: "Dodawanie tagu" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Add Tag"),
+          }}
         />
         <Stack.Screen
           name="EditTag"
           component={EditTagScreen}
-          options={{ headerShown: true, title: "Edycja tagu" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Edit Tag"),
+          }}
         />
         <Stack.Screen
           name="TagManager"
           component={TagManagerScreen}
-          options={{ headerShown: true, title: "Zarządzanie tagami" }}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Tag Manager"),
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

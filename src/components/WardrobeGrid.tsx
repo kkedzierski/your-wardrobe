@@ -131,12 +131,12 @@ const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
       });
 
       showNoticeForApi(res, {
-        titleSuccess: "Gotowe",
+        titleSuccess: "Success",
         fallbackSuccessMsg:
           res.ok && res.data?.notFoundIds?.length
-            ? "Niektóre pozycje nie zostały znalezione."
-            : "Zaznaczone ubrania zostały usunięte.",
-        titleError: "Nie udało się usunąć ubrań",
+            ? "Some clothes were not found and were not deleted."
+            : "Selected clothes deleted.",
+        titleError: "Failed to delete clothes.",
       });
 
       if (res.ok) {

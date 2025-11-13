@@ -18,9 +18,9 @@ export default function AddClothFromCameraButton() {
       setLoading(true);
       const res = await postCreateFromPhoto({ main: true });
       showNoticeForApi(res, {
-        titleSuccess: "Gotowe",
-        fallbackSuccessMsg: "Operacja zakończona.",
-        titleError: "Błąd",
+        titleSuccess: "Success",
+        fallbackSuccessMsg: "Operation completed.",
+        titleError: "Error",
       });
     } finally {
       setLoading(false);

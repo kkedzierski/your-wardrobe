@@ -11,6 +11,8 @@ import {
   ViewStyle,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { Translation } from "react-i18next";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 type Variant = "primary" | "secondary" | "ghost";
 type Size = "md" | "sm";
@@ -62,7 +64,9 @@ export default function UiButton({
           : undefined
       }
       accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel ?? title}
+      accessibilityLabel={
+        accessibilityLabel ?? TranslationServiceInstance.t(title)
+      }
       hitSlop={8}
     >
       {loading ? (
@@ -78,7 +82,7 @@ export default function UiButton({
             />
           ) : null}
           <Text style={styles.label} numberOfLines={1}>
-            {title}
+            {TranslationServiceInstance.t(title)}
           </Text>
           {iconRightName ? (
             <Feather

@@ -45,9 +45,6 @@ type Params = {
     location?: string;
     updatedAt: string;
   }) => void;
-
-  // przekazywane z AddCategoryScreen
-  newCategory?: Category;
 };
 
 export default function EditClothScreen() {
@@ -132,19 +129,11 @@ export default function EditClothScreen() {
   }, [clothId, initialData, title, navigation]);
 
   React.useEffect(() => {
-    if (name?.trim()) navigation.setOptions({ title: `Edytuj: ${name}` });
+    if (name?.trim())
+      navigation.setOptions({
+        title: `${TranslationServiceInstance.t("Edytuj")}: ${name}`,
+      });
   }, [name, navigation]);
-
-  // ✅ Po powrocie z AddCategoryScreen – natychmiast ustaw nową kategorię i wyczyść parametr
-  useFocusEffect(
-    React.useCallback(() => {
-      const p = route.params as Params | undefined;
-      if (p?.newCategory) {
-        setCategory(p.newCategory);
-        navigation.setParams({ newCategory: undefined });
-      }
-    }, [navigation, route.params])
-  );
 
   const onSave = useCallback(async () => {
     setSaving(true);
@@ -330,7 +319,14 @@ export default function EditClothScreen() {
         onSelect={(c) => setCategory(c)}
         onAddNew={() => {
           setPickerOpen(false);
-          navigation.navigate("AddCategory"); // route musi być dodany w stacku
+          navigation.navigate("AddCategory", {
+            // NIE potrzebujemy returnTo, użyjemy callbacku:
+            onCategoryCreated: (cat: Category) => {
+              // to się wykona w momencie zapisu w AddCategory,
+              // jeszcze zanim wrócisz goBack na EditCloth
+              setCategory(cat);
+            },
+          } as any);
         }}
       />
 

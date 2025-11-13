@@ -1,5 +1,6 @@
 import { getDb } from "../../../db/database";
 import { Logger } from "../../Kernel/Logger";
+import { ResourceMutationStatus } from "../../Kernel/ResourceMutationStatus";
 import type { Category } from "../Domain/Category";
 
 export async function getAllCategories({
@@ -192,18 +193,48 @@ export async function updateCategory(
 export async function deleteCategory(
   categoryId: number,
   userId?: string
-): Promise<boolean> {
+): Promise<ResourceMutationStatus> {
   const db = await getDb();
   await db.execAsync("BEGIN");
+
   try {
-    const whereCat = userId ? " AND user_id = ?" : "";
-    const res = await db.runAsync(
-      `DELETE FROM categories WHERE id = ?${whereCat}`,
+    const whereUser = userId ? " AND user_id = ?" : "";
+
+    // 1️⃣ Sprawdź, czy kategoria istnieje
+    const category = await db.getFirstAsync(
+      `SELECT id FROM categories WHERE id = ?${whereUser} LIMIT 1`,
       userId ? [categoryId, userId] : [categoryId]
     );
+
+    if (!category) {
+      await db.execAsync("ROLLBACK");
+      return ResourceMutationStatus.NOT_FOUND;
+    }
+
+    // 2️⃣ Sprawdź powiązania — czy kategoria jest używana
+    const inUse = await db.getFirstAsync(
+      `SELECT 1 FROM cloth WHERE category_id = ?${whereUser} LIMIT 1`,
+      userId ? [categoryId, userId] : [categoryId]
+    );
+
+    if (inUse) {
+      await db.execAsync("ROLLBACK");
+      return ResourceMutationStatus.IN_USE;
+    }
+
+    // 3️⃣ Usuń kategorię
+    const res = await db.runAsync(
+      `DELETE FROM categories WHERE id = ?${whereUser}`,
+      userId ? [categoryId, userId] : [categoryId]
+    );
+
     await db.execAsync("COMMIT");
+
     const affected = (res as any)?.changes ?? 0;
-    return affected > 0;
+
+    return affected > 0
+      ? ResourceMutationStatus.SUCCESS
+      : ResourceMutationStatus.NOT_FOUND; // fallback, choć nie powinno tu trafić
   } catch (e) {
     await db.execAsync("ROLLBACK");
     throw e;

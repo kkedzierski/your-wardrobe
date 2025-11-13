@@ -11,6 +11,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { showNoticeForApi } from "../../ui/apiNotice";
 import { postCreateTag } from "../../api/Tag/UI/REST/POST/CreateTag/CreateTagController";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 export default function AddTagScreen() {
   const nav = useNavigation<any>();
@@ -20,8 +21,8 @@ export default function AddTagScreen() {
   const onSave = useCallback(async () => {
     const trimmed = name.trim();
     if (trimmed.length < 2) {
-      showNoticeForApi({ ok: false, message: "Min. 2 znaki" } as any, {
-        titleError: "Błędna nazwa tagu",
+      showNoticeForApi({ ok: false, message: "Minimum 2 characters" } as any, {
+        titleError: "Invalid tag name",
       });
       return;
     }
@@ -30,9 +31,9 @@ export default function AddTagScreen() {
     setSaving(false);
 
     showNoticeForApi(res, {
-      titleSuccess: "Gotowe",
-      fallbackSuccessMsg: "Tag dodany.",
-      titleError: "Nie udało się dodać tagu",
+      titleSuccess: "Success",
+      fallbackSuccessMsg: "Tag added.",
+      titleError: "Failed to add tag",
     });
 
     if (res.ok) {
@@ -49,7 +50,7 @@ export default function AddTagScreen() {
         onChangeText={setName}
         style={styles.input}
         autoFocus
-        accessibilityLabel="Pole nazwy tagu"
+        accessibilityLabel={TranslationServiceInstance.t("Tag name input")}
       />
       <Pressable
         style={[styles.saveBtn, saving && { opacity: 0.6 }]}

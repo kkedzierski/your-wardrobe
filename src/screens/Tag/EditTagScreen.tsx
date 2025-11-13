@@ -13,6 +13,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { showNoticeForApi } from "../../ui/apiNotice";
 import { editTag } from "../../api/Tag/UI/REST/PATCH/EditTagController";
 import { deleteTag } from "../../api/Tag/UI/REST/DELETE/DeleteTag/DeleteTagController";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 export default function EditTagScreen() {
   const nav = useNavigation<any>();
@@ -26,8 +27,8 @@ export default function EditTagScreen() {
   const onSave = useCallback(async () => {
     const trimmed = name.trim();
     if (trimmed.length < 2) {
-      showNoticeForApi({ ok: false, message: "Minimum 2 znaki" } as any, {
-        titleError: "Błąd nazwy tagu",
+      showNoticeForApi({ ok: false, message: "Minimum 2 characters" } as any, {
+        titleError: "Invalid tag name",
       });
       return;
     }
@@ -36,9 +37,9 @@ export default function EditTagScreen() {
     setSaving(false);
 
     showNoticeForApi(res, {
-      titleSuccess: "Gotowe",
-      fallbackSuccessMsg: "Zmieniono tag.",
-      titleError: "Nie udało się zaktualizować tagu",
+      titleSuccess: "Success",
+      fallbackSuccessMsg: "Tag updated.",
+      titleError: "Failed to update tag",
     });
 
     if (res.ok) nav.goBack();
@@ -46,12 +47,14 @@ export default function EditTagScreen() {
 
   const onDelete = useCallback(() => {
     Alert.alert(
-      "Usunąć tag?",
-      "Usunięcie tagu nie usunie powiązanych ubrań.",
+      TranslationServiceInstance.t("Delete tag?"),
+      TranslationServiceInstance.t(
+        "Clothes associated with this tag will not be deleted."
+      ),
       [
-        { text: "Anuluj", style: "cancel" },
+        { text: TranslationServiceInstance.t("Cancel"), style: "cancel" },
         {
-          text: "Usuń",
+          text: TranslationServiceInstance.t("Delete"),
           style: "destructive",
           onPress: async () => {
             setRemoving(true);
@@ -59,9 +62,9 @@ export default function EditTagScreen() {
             setRemoving(false);
 
             showNoticeForApi(res, {
-              titleSuccess: "Gotowe",
-              fallbackSuccessMsg: "Tag usunięty.",
-              titleError: "Nie udało się usunąć tagu",
+              titleSuccess: "Success",
+              fallbackSuccessMsg: "Tag deleted.",
+              titleError: "Failed to delete tag",
             });
 
             if (res.ok) nav.goBack();

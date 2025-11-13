@@ -1,4 +1,3 @@
-// src/screens/AddCategoryScreen.tsx
 import React, { useState, useCallback } from "react";
 import {
   View,
@@ -8,45 +7,73 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { showNoticeForApi } from "../../ui/apiNotice";
-
-// dopasuj import do swojej ścieżki:
 import { postCreateCategory } from "../../api/Category/UI/REST/POST/CreateCategory/CreateCategoryController";
+import type { Category } from "../../api/Category/Domain/Category";
+
+type AddCategoryParams = {
+  returnTo?: "CategoryManager";
+  onCategoryCreated?: (category: Category) => void;
+};
 
 export default function AddCategoryScreen() {
   const nav = useNavigation<any>();
+  const route =
+    useRoute<RouteProp<Record<string, AddCategoryParams>, string>>();
+  const { returnTo, onCategoryCreated } = route.params ?? {};
+
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
 
   const onSave = useCallback(async () => {
     const trimmed = name.trim();
     if (trimmed.length < 2) {
-      showNoticeForApi({ ok: false, message: "Min. 2 znaki" } as any, {
-        titleError: "Błędna nazwa",
+      showNoticeForApi({ ok: false, message: "Minimum 2 characters" } as any, {
+        titleError: "Invalid category name",
       });
       return;
     }
+
     setSaving(true);
     const res = await postCreateCategory({ name: trimmed });
     setSaving(false);
 
     showNoticeForApi(res, {
-      titleSuccess: "Gotowe",
-      fallbackSuccessMsg: "Kategoria dodana.",
-      titleError: "Nie udało się dodać kategorii",
+      titleSuccess: "Success",
+      fallbackSuccessMsg: "Category added.",
+      titleError: "Failed to add category.",
     });
 
-    if (res.ok) {
-      // ✅ Wstrzyknij nową kategorię do EditCloth i NIE wywołuj goBack();
-      nav.navigate({
-        name: "EditCloth",
-        params: { newCategory: res.data },
-        merge: true,
-      });
-      // brak nav.goBack(); — focus wróci sam i EditCloth odczyta newCategory
+    if (!res.ok) return;
+
+    // 🔧 NORMALIZACJA
+    const raw: any = res.data;
+    const normalizedCategory: Category = {
+      id: Number(
+        raw.id ??
+          raw.categoryId ??
+          raw.category?.id ??
+          raw.categoryID ??
+          raw.category_id ??
+          0
+      ),
+      name:
+        raw.name ?? raw.categoryName ?? raw.category?.name ?? raw.label ?? "",
+    };
+
+    // callback dla EditCloth
+    if (onCategoryCreated) {
+      onCategoryCreated(normalizedCategory);
     }
-  }, [name, nav]);
+
+    // nawigacja
+    if (returnTo === "CategoryManager") {
+      nav.navigate("CategoryManager");
+    } else {
+      nav.goBack();
+    }
+  }, [name, nav, returnTo, onCategoryCreated]);
 
   return (
     <View style={styles.container}>

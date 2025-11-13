@@ -12,24 +12,40 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { showNoticeForApi } from "../../ui/apiNotice";
 
-// ⬅️ dopasuj ścieżki:
 import { deleteCategory } from "../../api/Category/UI/REST/DELETE/DeleteCategory/DeleteCategoryController";
 import { editCategory } from "../../api/Category/UI/REST/PATCH/EditCategoryController";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 export default function EditCategoryScreen() {
   const nav = useNavigation<any>();
   const route = useRoute<any>();
   const category = route.params?.category;
 
-  const [name, setName] = useState(category?.name ?? "");
+  // awaryjnie, gdyby ktoś wszedł tu bez category
+  if (!category) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.label}>
+          {TranslationServiceInstance.t("Category not found.")}
+        </Text>
+      </View>
+    );
+  }
+
+  const [name, setName] = useState<string>(category.name ?? "");
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
 
   const onSave = useCallback(async () => {
     const trimmed = name.trim();
+
+    // lokalna walidacja – też przez showNoticeForApi,
+    // żeby zachować ten sam UX co dla błędów z backendu
     if (trimmed.length < 2) {
-      showNoticeForApi({ ok: false, message: "Minimum 2 znaki" } as any, {
-        titleError: "Błąd",
+      showNoticeForApi({ ok: false, message: "Minimum 2 characters" } as any, {
+        titleError: "Error",
+        // można dać translate: true (domyślne), więc "Minimum 2 characters"
+        // i "Error" polecą przez TranslationService
       });
       return;
     }
@@ -41,36 +57,57 @@ export default function EditCategoryScreen() {
     });
     setSaving(false);
 
+    // Backend powinien ustawić message, np.:
+    // - "Category name updated."
+    // - "Category was not found."
+    // - "Failed to update category."
+    // showNoticeForApi najpierw spróbuje użyć res.message,
+    // a gdy jej nie będzie, użyje fallbackSuccessMsg.
     showNoticeForApi(res, {
-      titleSuccess: "Gotowe",
-      fallbackSuccessMsg: "Zmieniono nazwę kategorii.",
-      titleError: "Nie udało się zaktualizować kategorii",
+      titleSuccess: "Success",
+      fallbackSuccessMsg: "Category name updated.",
+      titleError: "Failed to update category.",
     });
 
-    if (res.ok) nav.goBack();
+    if (res.ok) {
+      nav.goBack();
+    }
   }, [name, category, nav]);
 
   const onDelete = useCallback(() => {
     Alert.alert(
-      "Usunąć kategorię?",
-      "Ubrania w tej kategorii nie zostaną usunięte.",
+      TranslationServiceInstance.t("Delete category?"),
+      TranslationServiceInstance.t(
+        "Clothes in this category will not be deleted."
+      ),
       [
-        { text: "Anuluj", style: "cancel" },
         {
-          text: "Usuń",
+          text: TranslationServiceInstance.t("Cancel"),
+          style: "cancel",
+        },
+        {
+          text: TranslationServiceInstance.t("Delete"),
           style: "destructive",
           onPress: async () => {
             setRemoving(true);
             const res = await deleteCategory({ categoryId: category.id });
             setRemoving(false);
 
+            // Backend powinien zwracać message np.:
+            // - "Category deleted."
+            // - "Category was not found."
+            // - "Category cannot be deleted because it is assigned to some clothes."
+            // - "Failed to delete category."
+            // showNoticeForApi pokaże dokładnie ten message (przetłumaczony przez t()).
             showNoticeForApi(res, {
-              titleSuccess: "Gotowe",
-              fallbackSuccessMsg: "Kategoria usunięta.",
-              titleError: "Nie udało się usunąć kategorii",
+              titleSuccess: "Success",
+              fallbackSuccessMsg: "Category deleted.",
+              titleError: "Failed to delete category.",
             });
 
-            if (res.ok) nav.goBack();
+            if (res.ok) {
+              nav.goBack();
+            }
           },
         },
       ]
@@ -79,12 +116,14 @@ export default function EditCategoryScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Nazwa kategorii</Text>
+      <Text style={styles.label}>
+        {TranslationServiceInstance.t("Category name")}
+      </Text>
 
       <TextInput
         value={name}
         onChangeText={setName}
-        placeholder="np. Kurtki"
+        placeholder={TranslationServiceInstance.t("e.g. Jackets")}
         style={styles.input}
       />
 
@@ -96,7 +135,9 @@ export default function EditCategoryScreen() {
         {saving ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.saveBtnText}>Zapisz</Text>
+          <Text style={styles.saveBtnText}>
+            {TranslationServiceInstance.t("Save")}
+          </Text>
         )}
       </Pressable>
 
@@ -108,7 +149,9 @@ export default function EditCategoryScreen() {
         {removing ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.deleteBtnText}>Usuń kategorię</Text>
+          <Text style={styles.deleteBtnText}>
+            {TranslationServiceInstance.t("Delete category")}
+          </Text>
         )}
       </Pressable>
     </View>

@@ -27,7 +27,7 @@ export default function TagManagerScreen() {
     if (res.ok && res.data) {
       setItems(res.data.items ?? []);
     } else {
-      showNoticeForApi(res, { titleError: "Nie udało się pobrać tagów" });
+      showNoticeForApi(res, { titleError: "Failed to load tags." });
     }
   }, []);
 

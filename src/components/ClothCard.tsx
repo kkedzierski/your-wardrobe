@@ -58,9 +58,9 @@ export default function ClothCard({
     setLoading(false);
 
     showNoticeForApi(res, {
-      titleSuccess: "Gotowe",
-      fallbackSuccessMsg: "Ubranie usunięte.",
-      titleError: "Nie udało się usunąć ubrania",
+      titleSuccess: "Success",
+      fallbackSuccessMsg: "Cloth deleted.",
+      titleError: "Failed to delete cloth.",
     });
 
     if (res.ok) onDeleted?.(cloth.id);
