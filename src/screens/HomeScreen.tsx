@@ -2,45 +2,49 @@
 import React from "react";
 import styled from "styled-components/native";
 import AddClothFromCameraButton from "../components/AddClothFromCameraButton";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 export default function HomeScreen() {
   return (
     <Container accessibilityLabel="Widok Startowy">
-      <HeaderArea>
-        <Headline>Twoja garderoba</Headline>
-        <Lead>Dodaj nowe ubranie jednym kliknięciem</Lead>
-      </HeaderArea>
+      <Title>{TranslationServiceInstance.t("Your wardrobe")}</Title>
+      <Subtitle>
+        {TranslationServiceInstance.t(
+          "Add a new piece of clothing with one click"
+        )}
+      </Subtitle>
 
-      {/* Hero CTA zajmujący ~50% ekranu */}
       <AddClothFromCameraButton />
 
       <BelowHint>
-        Wskazówka: rób zdjęcia na jednolitym tle dla lepszych wyników ✨
+        {TranslationServiceInstance.t(
+          "Tip: take photos on a uniform background for better results"
+        )}
+        ✨
       </BelowHint>
     </Container>
   );
 }
 
-const Container = styled.SafeAreaView`
+const Container = styled.View`
   flex: 1;
   background: #fff;
   padding: 16px;
 `;
 
-const HeaderArea = styled.View`
-  padding: 4px;
-  margin-bottom: 24px;
-`;
+// const HeaderArea = styled.View`
+//   margin-top: 16px;
+//   margin-bottom: 24px;
+// `;
 
-const Headline = styled.Text`
-  color: #111827;
-  font-size: 22px;
-  font-weight: 800;
+const Title = styled.Text`
+  font-size: 24px;
+  font-weight: 700;
+  color: #1b1b1b;
 `;
-
-const Lead = styled.Text`
-  color: #6b7280;
-  margin-top: 2px;
+const Subtitle = styled.Text`
+  color: #666;
+  margin-top: 4px;
 `;
 
 const BelowHint = styled.Text`

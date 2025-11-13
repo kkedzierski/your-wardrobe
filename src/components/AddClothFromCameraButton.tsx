@@ -1,27 +1,42 @@
-// AddClothFromCameraButton.tsx
 import React, { useMemo, useState } from "react";
 import { ActivityIndicator, Dimensions, Pressable } from "react-native";
 import styled from "styled-components/native";
+import { useNavigation } from "@react-navigation/native";
+
 import { postCreateFromPhoto } from "../api/Cloth/Ui/REST/POST/CreateFromPhoto/CreateFromPhotoController";
 import { showNoticeForApi } from "../ui/apiNotice";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 export default function AddClothFromCameraButton() {
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation<any>();
+
   const halfHeight = useMemo(
     () => Math.round(Dimensions.get("window").height * 0.5),
     []
   );
 
   const onPress = async () => {
-    if (loading) return; // bezpieczeństwo na szybkie tapy
+    if (loading) return;
     try {
       setLoading(true);
+
       const res = await postCreateFromPhoto({ main: true });
+
       showNoticeForApi(res, {
         titleSuccess: "Success",
         fallbackSuccessMsg: "Operation completed.",
         titleError: "Error",
       });
+
+      if (res.ok && res.data) {
+        // res.data: CreateClothFromPhotoDTO
+        const { clothId } = res.data;
+
+        navigation.navigate("EditCloth", {
+          clothId: Number(clothId), // jeśli wolisz mieć numer na pewno
+        } as any);
+      }
     } finally {
       setLoading(false);
     }
@@ -32,7 +47,9 @@ export default function AddClothFromCameraButton() {
       style={{ minHeight: halfHeight }}
       accessible
       accessibilityRole="button"
-      accessibilityHint="Otwiera aparat i dodaje zdjęcie ubrania do garderoby"
+      accessibilityHint={TranslationServiceInstance.t(
+        "Open the camera and add a photo of clothing to the wardrobe"
+      )}
       accessibilityState={{ disabled: loading, busy: loading }}
       testID="add-from-camera"
     >
@@ -53,12 +70,18 @@ export default function AddClothFromCameraButton() {
             </IconWrap>
 
             <Title>
-              {loading ? "Przetwarzanie…" : "Dodaj ubranie do garderoby"}
+              {loading
+                ? TranslationServiceInstance.t("Processing…")
+                : TranslationServiceInstance.t("Add clothing to wardrobe")}
             </Title>
             <Subtitle>
               {loading
-                ? "Proszę czekać, zapisujemy pozycję"
-                : "Zrób zdjęcie i automatycznie dodaj do szafy"}
+                ? TranslationServiceInstance.t(
+                    "Please wait, we are saving the position"
+                  )
+                : TranslationServiceInstance.t(
+                    "Take a photo and automatically add to the wardrobe"
+                  )}
             </Subtitle>
           </Card>
         )}
@@ -69,7 +92,7 @@ export default function AddClothFromCameraButton() {
 
 const CardWrapper = styled.View`
   width: 100%;
-  padding: 0 8px;
+  margin-top: 16px;
 `;
 
 const Card = styled.View<{ pressed?: boolean; disabled?: boolean }>`

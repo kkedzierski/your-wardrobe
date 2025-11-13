@@ -5,6 +5,7 @@ import type {
   ProviderConfig,
   LoginProviderId,
 } from "../auth/providers/loginProviders";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
@@ -64,7 +65,6 @@ export default function AccountConnections({
           );
 
           const common = {
-            key: p.id,
             onPress: p.enabled ? () => onPressProvider(p.id) : undefined,
             disabled: !p.enabled,
             accessibilityRole: "button" as const,
@@ -73,12 +73,18 @@ export default function AccountConnections({
             children: content,
           };
 
-          if (p.variant === "primary") return <Primary {...common} />;
-          if (p.variant === "secondary") return <Secondary {...common} />;
-          return <Outline {...common} />;
+          if (p.variant === "primary")
+            return <Primary key={p.id} {...common} />;
+          if (p.variant === "secondary")
+            return <Secondary key={p.id} {...common} />;
+          return <Outline key={p.id} {...common} />;
         })}
 
-        <Hint>Po zalogowaniu włączysz synchronizację i kopie zapasowe.</Hint>
+        <Hint>
+          {TranslationServiceInstance.t(
+            "After logging in, you will enable synchronization and backups."
+          )}
+        </Hint>
       </>
     );
   }

@@ -16,6 +16,7 @@ import AddTagScreen from "../screens/Tag/AddTagScreen";
 import EditTagScreen from "../screens/Tag/EditTagScreen";
 import TagManagerScreen from "../screens/Tag/TagManagerScreen";
 import { TranslationServiceInstance } from "../i18n/TranslationService";
+import WardrobeScreen from "../screens/Cloth/WardrobeScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -31,6 +32,7 @@ export type RootStackParamList = {
   AddTag: undefined;
   EditTag: undefined;
   TagManager: undefined;
+  Wardrobe: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -39,7 +41,11 @@ export default function RootNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{ headerShown: false, animation: "fade" }}
+        screenOptions={{
+          headerShown: false,
+          animation: "fade",
+          headerBackTitle: TranslationServiceInstance.t("Back"), // np. "Wstecz"
+        }}
       >
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen
@@ -135,6 +141,14 @@ export default function RootNavigator() {
           options={{
             headerShown: true,
             title: TranslationServiceInstance.t("Tag Manager"),
+          }}
+        />
+        <Stack.Screen
+          name="Wardrobe"
+          component={WardrobeScreen}
+          options={{
+            headerShown: true,
+            title: TranslationServiceInstance.t("Wardrobe"),
           }}
         />
       </Stack.Navigator>

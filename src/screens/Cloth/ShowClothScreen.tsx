@@ -52,13 +52,6 @@ export function ShowClothScreenView({ clothId }: Props) {
       const res = await getClothItem({ id: clothId });
       if (res.ok) {
         setData(res.data as any);
-        if (showSuccess) {
-          showNoticeForApi(res, {
-            titleSuccess: "Done",
-            fallbackSuccessMsg: "Operation completed.",
-            titleError: "Couldn't get cloth",
-          });
-        }
       } else {
         showNoticeForApi(res, { titleError: "Couldn't get cloth" });
       }
@@ -126,8 +119,6 @@ export function ShowClothScreenView({ clothId }: Props) {
     imageUrl = absolutize(main?.url);
   }
 
-  const t = (k: string) => TranslationServiceInstance.t(k);
-
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -153,7 +144,9 @@ export function ShowClothScreenView({ clothId }: Props) {
         <Text style={styles.title}>{data.name}</Text>
 
         {/* ===== Sekcja: Kategoria ===== */}
-        <Text style={styles.sectionLabel}>{t("Category")}</Text>
+        <Text style={styles.sectionLabel}>
+          {TranslationServiceInstance.t("Category")}
+        </Text>
         <View style={styles.metaRow}>
           {data.category ? (
             <View style={styles.badgePrimary}>
@@ -161,53 +154,65 @@ export function ShowClothScreenView({ clothId }: Props) {
             </View>
           ) : (
             <View style={[styles.badge, styles.badgeDashed]}>
-              <Text style={styles.badgeText}>{t("No category")}</Text>
+              <Text style={styles.badgeText}>
+                {TranslationServiceInstance.t("No category")}
+              </Text>
             </View>
           )}
         </View>
 
         {/* ===== Sekcja: Tagi ===== */}
-        <Text style={styles.sectionLabel}>{t("Tags")}</Text>
-        <View style={styles.metaRow}>
-          {!!(data.tags && data.tags.length) ? (
-            <View style={styles.tagsWrap}>
-              {data.tags.slice(0, 12).map((tag) => (
-                <View key={tag.id} style={styles.tagChip}>
-                  <Text style={styles.tagText}>#{tag.name}</Text>
-                </View>
-              ))}
-            </View>
-          ) : (
-            <View style={[styles.tagChip, styles.tagChipEmpty]}>
-              <Text style={styles.tagTextEmpty}>{t("No tags")}</Text>
-            </View>
-          )}
-        </View>
+        <Text style={styles.sectionLabel}>
+          {TranslationServiceInstance.t("Tags")}
+        </Text>
+
+        {data.tags && data.tags.length ? (
+          <View style={styles.tagsRow}>
+            {data.tags.slice(0, 8).map((tag) => (
+              <View key={tag.id} style={styles.tagChip}>
+                <Text style={styles.tagText}>#{tag.name}</Text>
+              </View>
+            ))}
+
+            {data.tags.length > 8 && (
+              <View style={[styles.tagChip, styles.tagChipMore]}>
+                <Text style={styles.tagMoreText}>+{data.tags.length - 8}</Text>
+              </View>
+            )}
+          </View>
+        ) : (
+          <View style={styles.tagEmptyWrap}>
+            <Feather name="tag" size={14} color="#9ca3af" />
+            <Text style={styles.tagEmptyText}>
+              {TranslationServiceInstance.t("No tags")}
+            </Text>
+          </View>
+        )}
 
         {/* Dane opisowe */}
         {data.description ? (
           <Text style={styles.row}>
-            {t("Description")}: {data.description}
+            {TranslationServiceInstance.t("Description")}: {data.description}
           </Text>
         ) : null}
         {data.brand ? (
           <Text style={styles.row}>
-            {t("Brand")}: {data.brand}
+            {TranslationServiceInstance.t("Brand")}: {data.brand}
           </Text>
         ) : null}
         {data.color ? (
           <Text style={styles.row}>
-            {t("Color")}: {data.color}
+            {TranslationServiceInstance.t("Color")}: {data.color}
           </Text>
         ) : null}
         {data.season ? (
           <Text style={styles.row}>
-            {t("Season")}: {data.season}
+            {TranslationServiceInstance.t("Season")}: {data.season}
           </Text>
         ) : null}
         {data.location ? (
           <Text style={styles.row}>
-            {t("Location")}: {data.location}
+            {TranslationServiceInstance.t("Location")}: {data.location}
           </Text>
         ) : null}
       </ScrollView>
@@ -215,7 +220,7 @@ export function ShowClothScreenView({ clothId }: Props) {
       {/* Pasek akcji */}
       <View style={styles.actionBar}>
         <UiButton
-          title={t("Refresh")}
+          title={TranslationServiceInstance.t("Refresh")}
           variant="ghost"
           iconLeftName="refresh-ccw"
           onPress={() => load(true)}
@@ -223,7 +228,7 @@ export function ShowClothScreenView({ clothId }: Props) {
         />
         <View style={{ width: 10 }} />
         <UiButton
-          title={t("Edit")}
+          title={TranslationServiceInstance.t("Edit")}
           variant="primary"
           iconLeftName="edit-3"
           onPress={goEdit}
@@ -308,20 +313,6 @@ const styles = StyleSheet.create({
   badgePrimaryText: { color: "#fff", fontSize: 13, fontWeight: "600" },
 
   // Tags chips
-  tagsWrap: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
-  tagChip: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 10,
-    backgroundColor: "#f2f2f2",
-  },
-  tagChipEmpty: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  tagText: { fontSize: 12, color: "#333" },
-  tagTextEmpty: { fontSize: 12, color: "#6b7280" },
 
   actionBar: {
     position: "absolute",
@@ -333,5 +324,51 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "#e5e7eb",
     flexDirection: "row",
+  },
+  // ===== TAGI =====
+  tagsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 8,
+  },
+  tagChip: {
+    borderRadius: 999, // full pill
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor: "#eef2ff", // indigo-50 vibe
+    borderWidth: 1,
+    borderColor: "#e0e7ff", // indigo-100
+  },
+  tagText: {
+    fontSize: 12,
+    color: "#4338ca", // indigo-700
+    fontWeight: "500",
+  },
+  tagChipMore: {
+    backgroundColor: "#f3f4f6", // neutral chip na końcu
+    borderColor: "#e5e7eb",
+  },
+  tagMoreText: {
+    fontSize: 12,
+    color: "#4b5563",
+    fontWeight: "500",
+  },
+  tagEmptyWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    backgroundColor: "#f9fafb",
+    marginBottom: 8,
+    gap: 6,
+  },
+  tagEmptyText: {
+    fontSize: 12,
+    color: "#9ca3af",
   },
 });

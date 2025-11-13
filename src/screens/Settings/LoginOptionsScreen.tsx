@@ -7,6 +7,7 @@ import {
   LoginProviderId,
 } from "../../auth/providers/loginProviders";
 import AccountConnections from "../../components/AccountConnections";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 export default function LoginOptionsScreen() {
   const { user, connectApple, connectGoogle } = useAuth();
@@ -33,9 +34,11 @@ export default function LoginOptionsScreen() {
 
   return (
     <Container>
-      <Title>Zaloguj się</Title>
+      <Title>{TranslationServiceInstance.t("Login")}</Title>
       <Subtitle>
-        Aby odblokować synchronizację, kopie zapasowe i dostęp z wielu urządzeń.
+        {TranslationServiceInstance.t(
+          "To unlock synchronization, backups and access from multiple devices."
+        )}
       </Subtitle>
 
       <AccountConnections

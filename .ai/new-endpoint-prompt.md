@@ -21,7 +21,6 @@ Zasady komunikatów (ważne)
 ```
 {
   "Access to the camera is required.": "Zezwól na dostęp do aparatu.",
-  "Taking photo was cancelled.": "Anulowano robienie zdjęcia.",
   "Failed to create cloth from photo.": "Nie udało się dodać zdjęcia.",
   "Done": "Gotowe",
   "Photo added to wardrobe.": "Zdjęcie dodane do garderoby.",

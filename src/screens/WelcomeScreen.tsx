@@ -7,6 +7,7 @@ import { useReducedMotion } from "react-native-reanimated";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/RootNavigator";
 import AnimatedButton from "../components/AnimatedButton";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
 
@@ -49,7 +50,7 @@ export default function WelcomeScreen({ navigation }: Props) {
           color: "#1b1b1b",
         }}
       >
-        Twoja Szafa
+        {TranslationServiceInstance.t("Your wardrobe")}
       </MotiText>
 
       <Subtitle
@@ -57,7 +58,9 @@ export default function WelcomeScreen({ navigation }: Props) {
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ delay: 320, duration: 350 }}
       >
-        Zarządzaj swoją garderobą łatwo i wygodnie
+        {TranslationServiceInstance.t(
+          "Easily manage your wardrobe with this app"
+        )}
       </Subtitle>
 
       {/* CTA: slide-up + delikatne „pulse” tła */}
@@ -72,7 +75,7 @@ export default function WelcomeScreen({ navigation }: Props) {
           transition={{ duration: 1600, loop: !reduce, repeatReverse: true }}
         />
         <AnimatedButton
-          label="Zaczynamy!"
+          label={TranslationServiceInstance.t("Let's start!")}
           onPress={() => navigation.navigate("MainTabs")}
         />
       </CTAWrapper>

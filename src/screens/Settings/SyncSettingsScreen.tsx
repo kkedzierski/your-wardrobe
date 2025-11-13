@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../../auth/AuthContext";
 import AccountConnections from "../../components/AccountConnections";
 import { LOGIN_PROVIDERS } from "../../auth/providers/loginProviders";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 export default function SyncSettingsScreen() {
   const { user, connectApple, connectGoogle, disconnect, loginWithEmail } =
@@ -12,10 +13,11 @@ export default function SyncSettingsScreen() {
 
   return (
     <Container>
-      <Title>Synchronizacja</Title>
+      <Title>{TranslationServiceInstance.t("Synchronization")}</Title>
       <Subtitle>
-        Połącz konto, aby Twoje dane były bezpieczne i dostępne na każdym
-        urządzeniu.
+        {TranslationServiceInstance.t(
+          "Connect account to keep your data safe and accessible on all devices."
+        )}
       </Subtitle>
 
       {/* Dlaczego warto (benefity) */}
@@ -26,7 +28,11 @@ export default function SyncSettingsScreen() {
             size={20}
             color="#4a90e2"
           />
-          <CardHeaderText>Dlaczego warto włączyć synchronizację</CardHeaderText>
+          <CardHeaderText>
+            {TranslationServiceInstance.t(
+              "Why it's worth enabling synchronization"
+            )}
+          </CardHeaderText>
         </CardHeader>
 
         <Benefit>
@@ -36,8 +42,12 @@ export default function SyncSettingsScreen() {
             color="#1b1b1b"
           />
           <BenefitText>
-            <Strong>Zmiana telefonu</Strong> — przenieś garderobę i ustawienia
-            na nowe urządzenie bez ręcznego kopiowania.
+            <Strong>
+              {TranslationServiceInstance.t("Changing the phone")}
+            </Strong>{" "}
+            {TranslationServiceInstance.t(
+              "— move your wardrobe and settings to a new device without manual copying."
+            )}
           </BenefitText>
         </Benefit>
 
@@ -48,16 +58,20 @@ export default function SyncSettingsScreen() {
             color="#1b1b1b"
           />
           <BenefitText>
-            <Strong>Kopie zapasowe</Strong> — odzyskaj dane po reinstalacji lub
-            utracie urządzenia.
+            <Strong>{TranslationServiceInstance.t("Backups")}</Strong>{" "}
+            {TranslationServiceInstance.t(
+              "— restore data after reinstall or device loss."
+            )}
           </BenefitText>
         </Benefit>
 
         <Benefit>
           <MaterialCommunityIcons name="devices" size={18} color="#1b1b1b" />
           <BenefitText>
-            <Strong>Wiele urządzeń</Strong> — używaj aplikacji na telefonie i
-            tablecie z tym samym kontem.
+            <Strong>{TranslationServiceInstance.t("Multiple devices")}</Strong>{" "}
+            {TranslationServiceInstance.t(
+              "— use the app on your phone and tablet with the same account."
+            )}
           </BenefitText>
         </Benefit>
       </Card>
@@ -71,9 +85,12 @@ export default function SyncSettingsScreen() {
             color="#2563eb"
           />
           <CalloutText>
-            <Strong>W najbliższym czasie:</Strong> udostępnianie ofert (np.
-            Vinted) bezpośrednio z garderoby. Do tego będzie wymagane połączone
-            konto.
+            <Strong>
+              {TranslationServiceInstance.t("In the near future")}:
+            </Strong>{" "}
+            {TranslationServiceInstance.t(
+              "sharing offers (e.g. Vinted) directly from your wardrobe. To do this, you will need a connected account."
+            )}
           </CalloutText>
         </CalloutRow>
       </Callout>
@@ -105,7 +122,9 @@ export default function SyncSettingsScreen() {
               size={20}
               color="#4a90e2"
             />
-            <HeaderText>Akcje synchronizacji</HeaderText>
+            <HeaderText>
+              {TranslationServiceInstance.t("Synchronization actions")}
+            </HeaderText>
           </SectionHeader>
 
           <DisabledButton
@@ -118,12 +137,15 @@ export default function SyncSettingsScreen() {
               size={18}
               color="#6b7280"
             />
-            <DisabledText>Uruchom synchronizację — wkrótce</DisabledText>
+            <DisabledText>
+              {TranslationServiceInstance.t("Run synchronization — soon")}
+            </DisabledText>
           </DisabledButton>
 
           <Hint>
-            Ta funkcja pojawi się w kolejnej wersji. Dane konta są już
-            połączone.
+            {TranslationServiceInstance.t(
+              "This feature will appear in the next version. Your account is already connected."
+            )}
           </Hint>
         </Card>
       )}
@@ -132,8 +154,9 @@ export default function SyncSettingsScreen() {
       <FootNote>
         <MaterialCommunityIcons name="shield-check" size={16} color="#64748b" />
         <FootNoteText>
-          Synchronizujemy wyłącznie dane potrzebne do działania aplikacji.
-          Możesz odłączyć konto w dowolnym momencie.
+          {TranslationServiceInstance.t(
+            "We synchronize only the data necessary for the app to work. You can disconnect your account at any time."
+          )}
         </FootNoteText>
       </FootNote>
     </Container>

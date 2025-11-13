@@ -13,26 +13,31 @@ import { Feather } from "@expo/vector-icons";
 import { showNoticeForApi } from "../../ui/apiNotice";
 import type { Tag } from "../../api/Tag/Domain/Tag";
 import { getTagsCollection } from "../../api/Tag/UI/REST/GET/GetTagsCollection/GetTagsCollectionOutputController";
+import UiButton from "../../components/UiButton";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 export default function TagManagerScreen() {
   const nav = useNavigation<any>();
   const [items, setItems] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (showSuccess = false) => {
     setLoading(true);
     const res = await getTagsCollection();
     setLoading(false);
 
     if (res.ok && res.data) {
       setItems(res.data.items ?? []);
+      // opcjonalnie: showSuccess => pokaż komunikat "odświeżono"
     } else {
-      showNoticeForApi(res, { titleError: "Failed to load tags." });
+      if (!showSuccess) {
+        showNoticeForApi(res, { titleError: "Failed to load tags." });
+      }
     }
   }, []);
 
   useEffect(() => {
-    load();
+    load(false);
   }, [load]);
 
   const goEdit = (item: Tag) => {
@@ -40,24 +45,26 @@ export default function TagManagerScreen() {
   };
 
   const goAdd = () => {
-    nav.navigate("AddTag");
+    nav.navigate("AddTag", { returnTo: "TagManager" });
   };
 
   if (loading) {
     return (
       <View style={styles.center}>
         <ActivityIndicator />
-        <Text style={{ marginTop: 8 }}>Wczytywanie…</Text>
+        <Text style={{ marginTop: 8 }}>
+          {TranslationServiceInstance.t("Loading…")}
+        </Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.screen}>
       <FlatList
         data={items}
         keyExtractor={(i) => String(i.id)}
-        contentContainerStyle={{ paddingVertical: 8 }}
+        contentContainerStyle={{ paddingVertical: 8, paddingBottom: 120 }}
         renderItem={({ item }) => (
           <Pressable style={styles.row} onPress={() => goEdit(item)}>
             <Text style={styles.rowText}>{item.name}</Text>
@@ -66,16 +73,35 @@ export default function TagManagerScreen() {
         )}
       />
 
-      <Pressable style={styles.addBtn} onPress={goAdd}>
-        <Feather name="plus" size={18} color="#fff" />
-        <Text style={styles.addBtnText}>Dodaj tag</Text>
-      </Pressable>
+      {/* Pasek akcji jak przy kategoriach */}
+      <View style={styles.actionBar}>
+        <UiButton
+          title="Refresh"
+          variant="ghost"
+          iconLeftName="refresh-ccw"
+          onPress={() => load(true)}
+          style={{ flex: 1 }}
+        />
+
+        <View style={{ width: 10 }} />
+
+        <UiButton
+          title="Add"
+          variant="primary"
+          iconLeftName="plus"
+          onPress={goAdd}
+          style={{ flex: 1 }}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 12 },
+  screen: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   center: {
     flex: 1,
     alignItems: "center",
@@ -92,15 +118,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rowText: { fontSize: 16, color: "#111" },
-  addBtn: {
-    marginTop: 20,
-    backgroundColor: "#111827",
-    paddingVertical: 14,
-    borderRadius: 10,
+  actionBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 16,
+    backgroundColor: "#ffffffee",
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#e5e7eb",
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
   },
-  addBtnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
 });

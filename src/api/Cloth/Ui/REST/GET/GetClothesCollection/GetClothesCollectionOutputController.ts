@@ -15,7 +15,14 @@ import type { GetClothesCollectionOutput } from "./GetClothesCollectionOutput";
 type Query = {
   limit?: number;
   offset?: number;
-  sort?: GetAllClothsSort; // "created_at:desc" | "created_at:asc" | "name:asc" | "name:desc"
+  sort?: GetAllClothsSort; // "created_at:desc" | ...
+  description?: string;
+  brand?: string;
+  color?: string;
+  season?: string;
+  location?: string;
+  categoryName?: string;
+  tagNames?: string[]; // np. ?tagNames=summer&tagNames=jeans
 };
 
 export async function getClothesCollection(
@@ -24,7 +31,6 @@ export async function getClothesCollection(
   try {
     const userId = await getActiveUserId();
 
-    // domyślne wartości + minimalna walidacja
     const limitRaw = Number.isFinite(query.limit) ? Number(query.limit) : 100;
     const offsetRaw = Number.isFinite(query.offset) ? Number(query.offset) : 0;
 
@@ -48,21 +54,31 @@ export async function getClothesCollection(
       limit,
       offset,
       sort,
+      filters: {
+        description: query.description ?? undefined,
+        brand: query.brand ?? undefined,
+        color: query.color ?? undefined,
+        season: query.season ?? undefined,
+        location: query.location ?? undefined,
+        categoryName: query.categoryName ?? undefined,
+        tagNames:
+          query.tagNames && query.tagNames.length > 0
+            ? query.tagNames
+            : undefined,
+      },
     });
 
-    // Mapowanie do kontraktu Output (items: {id, name, thumbUrl}[])
     const data: GetClothesCollectionOutput = {
       items: cloths.map((c) => ({
         id: c.id,
         name: c.name,
-        thumbUrl: c.thumbUrl,
+        thumbUrl: (c as any).thumbUrl ?? null,
       })),
     };
 
     return Api.ok<GetClothesCollectionOutput>(data);
   } catch (error) {
     Logger.error("GetClothesOutputController", error);
-    // EN po zdaniu – bez translacji tutaj
     return Api.error(ApiErrorCode.INTERNAL, "Failed to get clothes.");
   }
 }

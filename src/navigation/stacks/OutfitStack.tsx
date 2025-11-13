@@ -2,6 +2,7 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import OutfitScreen from "../../screens/OutfitScreen";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 function OutfitDetailsScreen() {
   return null;
 }
@@ -19,12 +20,12 @@ export default function OutfitStack() {
       <Stack.Screen
         name="Outfit"
         component={OutfitScreen}
-        options={{ title: "Stroje" }}
+        options={{ title: TranslationServiceInstance.t("Outfits") }}
       />
       <Stack.Screen
         name="OutfitDetails"
         component={OutfitDetailsScreen}
-        options={{ title: "Szczegóły" }}
+        options={{ title: TranslationServiceInstance.t("Details") }}
       />
     </Stack.Navigator>
   );

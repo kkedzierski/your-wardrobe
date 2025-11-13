@@ -22,6 +22,7 @@ import { getClothesCollection } from "../api/Cloth/Ui/REST/GET/GetClothesCollect
 import { batchDeleteCloths } from "../api/Cloth/Ui/REST/DELETE/BatchDeleteCloth/BatchDeleteClothController";
 import { showNoticeForApi } from "../ui/apiNotice";
 import { EventBus, EVENTS } from "../events/bus";
+import { WardrobeFilter } from "../api/Cloth/Ui/REST/GET/GetClothesCollection/ClothesFilters";
 
 export type Cloth = {
   id: number;
@@ -35,13 +36,13 @@ export type WardrobeGridHandle = {
 
 type Props = {
   userId?: string;
+  filters?: WardrobeFilter;
 };
-
 const GAP = 16;
 const COLUMNS = 2;
 
 const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
-  function WardrobeGrid({ userId }: Props, ref) {
+  function WardrobeGrid({ userId, filters }: Props, ref) {
     const [items, setItems] = useState<Cloth[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -62,6 +63,17 @@ const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
         limit: 100,
         offset: 0,
         sort: "created_at:desc",
+        // 🔽 mapowanie filtrów na query:
+        description: filters?.description,
+        brand: filters?.brand,
+        color: filters?.color,
+        season: filters?.season,
+        location: filters?.location,
+        categoryName: filters?.categoryName,
+        tagNames:
+          filters?.tagNames && filters.tagNames.length
+            ? filters.tagNames
+            : undefined,
       });
 
       if (res.ok && res.data?.items) {
@@ -69,7 +81,7 @@ const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
       } else if (!res.ok) {
         console.warn("Failed to get clothes:", res.message);
       }
-    }, [userId]);
+    }, [userId, filters]);
 
     const reload = useCallback(async () => {
       setRefreshing(true);
@@ -82,7 +94,6 @@ const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
 
     useImperativeHandle(ref, () => ({ reload }), [reload]);
 
-    // pierwszy load
     useEffect(() => {
       (async () => {
         try {

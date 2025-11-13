@@ -298,16 +298,28 @@ export type GetAllClothsSort =
   | "name:asc"
   | "name:desc";
 
+export type ClothFilters = {
+  description?: string | null;
+  brand?: string | null;
+  color?: string | null;
+  season?: string | null;
+  location?: string | null;
+  categoryName?: string | null; // z tabeli categories.name
+  tagNames?: string[]; // z tabeli tags.name
+};
+
 export async function getAllCloths({
   userId,
   limit = 120,
   offset = 0,
   sort = "created_at:desc",
+  filters,
 }: {
-  userId?: string;
+  userId?: string | number;
   limit?: number;
   offset?: number;
   sort?: GetAllClothsSort;
+  filters?: ClothFilters;
 } = {}): Promise<Cloth[]> {
   const t0 = Date.now();
   const db = await getDb();
@@ -321,10 +333,88 @@ export async function getAllCloths({
       ? "c.name COLLATE NOCASE DESC, c.id DESC"
       : "c.created_at DESC, c.id DESC"; // domyślnie created_at:desc
 
+  // 🔽 zbieramy warunki WHERE + parametry
+  const whereParts: string[] = [
+    "c.deleted_at IS NULL", // ubranie aktywne
+  ];
+  const params: any[] = [];
+
+  if (userId != null) {
+    whereParts.push("c.user_id = ?");
+    params.push(userId);
+  }
+
+  if (filters?.description) {
+    whereParts.push("c.description LIKE ?");
+    params.push(`%${filters.description}%`);
+  }
+
+  if (filters?.brand) {
+    whereParts.push("c.brand LIKE ?");
+    params.push(`%${filters.brand}%`);
+  }
+
+  if (filters?.color) {
+    whereParts.push("c.color LIKE ?");
+    params.push(`%${filters.color}%`);
+  }
+
+  if (filters?.season) {
+    whereParts.push("c.season = ?");
+    params.push(filters.season);
+  }
+
+  if (filters?.location) {
+    whereParts.push("c.location LIKE ?");
+    params.push(`%${filters.location}%`);
+  }
+
+  // 🔽 filtr po nazwie kategorii (categories.name)
+  if (filters?.categoryName) {
+    whereParts.push(`
+      EXISTS (
+        SELECT 1
+          FROM categories cat
+         WHERE cat.id = c.category_id
+           AND cat.deleted_at IS NULL
+           AND cat.user_id = c.user_id
+           AND cat.name LIKE ?
+      )
+    `);
+    params.push(`%${filters.categoryName}%`);
+  }
+
+  // 🔽 filtr po tagach (tags.name + cloth_tags)
+  if (filters?.tagNames && filters.tagNames.length > 0) {
+    const placeholders = filters.tagNames.map(() => "?").join(", ");
+
+    // wymóg: ubranie musi mieć WSZYSTKIE wskazane tagi
+    whereParts.push(`
+      EXISTS (
+        SELECT 1
+          FROM cloth_tags ct
+          JOIN tags t
+            ON t.id = ct.tag_id
+           AND t.user_id = c.user_id
+         WHERE ct.cloth_id = c.id
+           AND t.name IN (${placeholders})
+         GROUP BY ct.cloth_id
+        HAVING COUNT(DISTINCT t.name) = ?
+      )
+    `);
+
+    params.push(...filters.tagNames);
+    params.push(filters.tagNames.length);
+  }
+
+  const whereClause = whereParts.length
+    ? `WHERE ${whereParts.join(" AND ")}`
+    : "";
+
   const sql = `
     SELECT
       c.id,
-      c.user_id,
+      c.user_id             AS userId,
       c.name,
       c.description,
       c.created_at,
@@ -333,21 +423,21 @@ export async function getAllCloths({
         SELECT p.file_path
           FROM cloth_photos p
          WHERE p.cloth_id = c.id
-           AND (p.deleted_at IS NULL OR p.deleted_at IS NULL)
+           AND p.deleted_at IS NULL
          ORDER BY p.main DESC, p.created_at DESC, p.id DESC
          LIMIT 1
       ) AS thumb_path
     FROM cloth c
-    WHERE (c.deleted_at IS NULL OR c.deleted_at IS NULL)
-      ${userId ? "AND c.user_id = ?" : ""}
+    ${whereClause}
     ORDER BY ${orderBy}
     LIMIT ? OFFSET ?;
   `;
 
-  const params = userId ? [userId, limit, offset] : [limit, offset];
+  params.push(limit, offset);
+
   const rows = await db.getAllAsync<{
     id: number;
-    userId: string;
+    userId: number;
     name: string;
     description: string | null;
     created_at: number;
@@ -374,10 +464,12 @@ export async function getAllCloths({
     limit,
     offset,
     sort,
+    filters,
   });
 
   return result;
 }
+
 export async function updateCloth(
   clothId: number,
   patch: {

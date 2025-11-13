@@ -32,7 +32,7 @@ export async function postCreateFromPhoto(input: CreateFromPhotoInput = {}) {
     });
 
     if (res.canceled || !res.assets?.[0]?.uri) {
-      return Api.error(ApiErrorCode.BAD_REQUEST, "Taking photo was cancelled.");
+      return;
     }
 
     const asset = res.assets[0];

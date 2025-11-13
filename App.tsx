@@ -1,55 +1,55 @@
-// App.tsx
-import "react-native-reanimated"; // pierwszy import!
+import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
-import { runMigrations, MigrationType } from "./src/db";
-
 import { ThemeProvider } from "styled-components/native";
 import RootNavigator from "./src/navigation/RootNavigator";
 import { theme } from "./src/theme/theme";
 import { AuthProvider } from "./src/auth/AuthContext";
-import { ensureGuestUser } from "./src/auth/ensureGuestUser"; // 👈 DODANE
-import { resetDatabase } from "./src/db/resetDatabase";
 import AppLockGate from "./src/auth/AppLockGate";
-import { getDb } from "./src/db/database";
-import { sanityCheckSqlite } from "./src/db/sanity";
+import { initApp } from "./src/app/initApp";
+
+type InitState =
+  | { status: "idle" | "loading" }
+  | { status: "ready"; userId: string }
+  | { status: "error"; error: Error };
 
 export default function App() {
-  const [ready, setReady] = useState(false);
+  const [init, setInit] = useState<InitState>({ status: "loading" });
 
   useEffect(() => {
     (async () => {
       try {
-        if (process.env.ENV === "dev") {
-          await resetDatabase();
-          console.log("🧹 Usunięto bazę danych");
-        }
-        await runMigrations(MigrationType.Up);
-        console.log("✅ Migracje OK");
-        await sanityCheckSqlite(); // ⬅️ uruchom najpierw sanity
-
-        const id = await ensureGuestUser();
-        console.log("👤 Active user UUID:", id);
-
-        // po ensure jeszcze raz policz
-        const db = await getDb();
-        const users = await db.getFirstAsync<{ c: number }>(
-          "SELECT COUNT(*) c FROM users"
-        );
-        console.log("📊 Po ensure users:", users?.c);
-        setReady(true);
-      } catch (err: any) {
-        console.error("❌ Migration/init error:", err?.message ?? err);
-        console.error("📄 Details:", err);
+        const result = await initApp();
+        setInit({ status: "ready", userId: result.userId });
+      } catch (e: any) {
+        console.error("❌ App init failed:", e);
+        setInit({
+          status: "error",
+          error: e instanceof Error ? e : new Error(String(e)),
+        });
       }
     })();
   }, []);
 
-  if (!ready) {
-    // Możesz tu wstawić Splash/Loader; Expo Splash i tak będzie przykrywać
+  if (init.status === "loading") {
+    // można tu dać swój Splash/Loader
     return null;
   }
 
+  if (init.status === "error") {
+    // PROSTA strona błędu – lepsze niż „cisza”
+    return (
+      <GestureHandlerRootView
+        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      >
+        <ThemeProvider theme={theme}>
+          {/* tu możesz dać ładny ekran z "Spróbuj ponownie" itp. */}
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    );
+  }
+
+  // init.status === "ready"
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider theme={theme}>

@@ -8,6 +8,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/RootNavigator";
 import * as LocalAuth from "expo-local-authentication";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 const BIOMETRICS_KEY = "security:biometricsEnabled";
 
@@ -48,7 +49,9 @@ export default function SettingsScreen() {
   const toggleBiometrics = async () => {
     if (!bioAvailable) {
       alert(
-        "Na tym urządzeniu biometria jest niedostępna lub nie została skonfigurowana."
+        TranslationServiceInstance.t(
+          "Biometrics are not available or not configured on this device."
+        )
       );
       return;
     }
@@ -59,14 +62,20 @@ export default function SettingsScreen() {
 
   const testBiometrics = async () => {
     const res = await LocalAuth.authenticateAsync({
-      promptMessage: `Uwierzytelnij ${bioLabel}`,
-      cancelLabel: "Anuluj",
+      promptMessage: `${TranslationServiceInstance.t(
+        "Authenticate with"
+      )} ${bioLabel}`,
+      cancelLabel: TranslationServiceInstance.t("Cancel"),
       disableDeviceFallback: false,
     });
     if (res.success) {
-      alert("✅ Uwierzytelniono pomyślnie");
+      alert(TranslationServiceInstance.t("Successfully authenticated"));
     } else {
-      alert(`❌ Niepowodzenie: ${res.error ?? "anulowano"}`);
+      alert(
+        `${TranslationServiceInstance.t("Failed to authenticate")}: ${
+          res.error ?? TranslationServiceInstance.t("Canceled")
+        }`
+      );
     }
   };
 
@@ -90,10 +99,10 @@ export default function SettingsScreen() {
           <ProfileName>{user?.email || "Użytkownik"}</ProfileName>
           <ProfileMeta>
             {isGuest
-              ? "Tryb gościa"
-              : `Połączono: ${user.provider}${
-                  user.email ? ` • ${user.email}` : ""
-                }`}
+              ? TranslationServiceInstance.t("Guest mode")
+              : `${TranslationServiceInstance.t("Connected to")}: ${
+                  user.provider
+                }${user.email ? ` • ${user.email}` : ""}`}
           </ProfileMeta>
         </ProfileInfo>
         <MaterialCommunityIcons
@@ -135,8 +144,12 @@ export default function SettingsScreen() {
 
         <Subtitle>
           {isGuest
-            ? "Połącz konto, aby włączyć synchronizację i kopie zapasowe."
-            : "Synchronizacja jest dostępna — zobacz szczegóły i status."}
+            ? TranslationServiceInstance.t(
+                "Connect account to enable synchronization and backups."
+              )
+            : TranslationServiceInstance.t(
+                "Synchronization is available — see details and status."
+              )}
         </Subtitle>
       </Card>
 
@@ -168,10 +181,14 @@ export default function SettingsScreen() {
 
         <SmallNote>
           {loading
-            ? "Sprawdzanie dostępności biometrii…"
+            ? TranslationServiceInstance.t("Checking biometrics availability…")
             : bioAvailable
-            ? "Po włączeniu aplikacja poprosi o uwierzytelnienie przy starcie lub powrocie."
-            : "Biometria jest niedostępna lub nie została skonfigurowana w systemie."}
+            ? TranslationServiceInstance.t(
+                "When enabled, the app will prompt for authentication on startup or return."
+              )
+            : TranslationServiceInstance.t(
+                "Biometrics are not available or not configured on this device."
+              )}
         </SmallNote>
 
         <TestBtn
@@ -185,7 +202,9 @@ export default function SettingsScreen() {
             size={18}
             color="#111"
           />
-          <TestBtnText>Przetestuj {bioLabel}</TestBtnText>
+          <TestBtnText>
+            {TranslationServiceInstance.t("Test biometrics")} {bioLabel}
+          </TestBtnText>
         </TestBtn>
       </Card>
     </Container>

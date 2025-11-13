@@ -1,6 +1,5 @@
 // src/db/sanity.ts
 import { getDb } from "./database";
-import { randomUUID } from "expo-crypto";
 
 export async function sanityCheckSqlite() {
   const db = await getDb();
@@ -28,25 +27,13 @@ export async function sanityCheckSqlite() {
   );
   console.log("🔬 SANITY: _sanity count =", s?.c);
 
-  // 2) spróbujmy wprost wstawić gościa (identyczny INSERT jak w ensure)
-  const testId = randomUUID();
-  const now = Date.now();
-  try {
-    await db.runAsync(
-      `INSERT INTO users (id, kind, role, created_at, updated_at)
-       VALUES (?, 'guest', 'ROLE_USER', ?, ?)`,
-      [testId, now, now]
-    );
-    const u = await db.getFirstAsync<{ c: number }>(
-      "SELECT COUNT(*) c FROM users WHERE id = ?",
-      [testId]
-    );
-    console.log("🔬 SANITY: users row for testId exists? =", u?.c);
-  } catch (e: any) {
-    console.error("❌ SANITY: INSERT INTO users failed:", e?.message ?? e);
-  }
+  // 2) ewentualnie: sprawdź, czy istnieją tabele domenowe (bez insertów)
+  const usersTable = await db.getFirstAsync<{ name: string }>(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='users';"
+  );
+  console.log("🔬 SANITY: users table exists?", !!usersTable?.name);
 
-  // 3) zbiorcze liczby
+  // 3) summary log
   const users = await db.getFirstAsync<{ c: number }>(
     "SELECT COUNT(*) c FROM users;"
   );

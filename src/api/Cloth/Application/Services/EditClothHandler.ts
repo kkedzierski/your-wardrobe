@@ -13,6 +13,7 @@ export async function processEditCloth(dto: EditClothDTO): Promise<{
     color?: string;
     brand?: string;
     categoryId?: number;
+    tagIds?: number[];
     location?: string;
     updatedAt: string;
   };

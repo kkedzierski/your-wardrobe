@@ -18,6 +18,7 @@ import { getCategoriesCollection } from "../../api/Category/UI/REST/GET/GetCateg
 
 // ten sam komponent co w ShowClothScreen
 import UiButton from "../../components/UiButton";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 export default function CategoryManagerScreen() {
   const nav = useNavigation<any>();
@@ -54,7 +55,9 @@ export default function CategoryManagerScreen() {
     return (
       <View style={styles.center}>
         <ActivityIndicator />
-        <Text style={{ marginTop: 8 }}>Wczytywanie…</Text>
+        <Text style={{ marginTop: 8 }}>
+          {TranslationServiceInstance.t("Loading…")}
+        </Text>
       </View>
     );
   }

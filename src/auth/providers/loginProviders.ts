@@ -1,3 +1,5 @@
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
+
 export type LoginProviderId = "email" | "apple" | "google" | "facebook";
 
 export type ProviderConfig = {
@@ -13,27 +15,26 @@ export type ProviderConfig = {
 export const LOGIN_PROVIDERS: ProviderConfig[] = [
   {
     id: "email",
-    label: "Zaloguj e-mail / hasło",
+    label: TranslationServiceInstance.t("Login with email / password"),
     iconName: "email-outline",
     variant: "outline",
     enabled: false,
-    // mode: "inline", // 👈 formularz w komponencie
-    note: "wkrótce",
+    note: TranslationServiceInstance.t("soon"),
   },
   {
     id: "apple",
-    label: "Zaloguj przez Apple",
+    label: TranslationServiceInstance.t("Login with Apple"),
     iconName: "apple",
     variant: "secondary",
     enabled: true,
   },
   {
     id: "google",
-    label: "Zaloguj przez Google",
+    label: TranslationServiceInstance.t("Login with Google"),
     iconName: "google",
     variant: "outline",
     enabled: false,
-    note: "wkrótce",
+    note: TranslationServiceInstance.t("soon"),
   },
   // { id: "facebook", label: "Zaloguj przez Facebook", iconName: "facebook", variant: "outline", enabled: false, note: "wkrótce" },
 ];

@@ -8,13 +8,21 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { showNoticeForApi } from "../../ui/apiNotice";
 import { postCreateTag } from "../../api/Tag/UI/REST/POST/CreateTag/CreateTagController";
 import { TranslationServiceInstance } from "../../i18n/TranslationService";
+import { Tag } from "../../api/Tag/Domain/Tag";
+
+type AddTagParams = {
+  returnTo?: "TagManager";
+  onTagCreated?: (tag: Tag) => void;
+};
 
 export default function AddTagScreen() {
   const nav = useNavigation<any>();
+  const route = useRoute<RouteProp<Record<string, AddTagParams>, string>>();
+  const { onTagCreated, returnTo } = route.params ?? {};
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -36,10 +44,29 @@ export default function AddTagScreen() {
       titleError: "Failed to add tag",
     });
 
-    if (res.ok) {
+    if (!res.ok) return;
+
+    // Normalizacja na wzór kategorii
+    const raw: any = res.data;
+    const normalizedTag: Tag = {
+      id: Number(raw.id ?? raw.tagId ?? raw.tag_id ?? 0),
+      name: raw.name ?? raw.tagName ?? raw.label ?? "",
+      user_id: raw.user_id ?? "",
+      created_at: raw.created_at ?? 0,
+      updated_at: raw.updated_at ?? 0,
+    };
+
+    if (onTagCreated) {
+      onTagCreated(normalizedTag);
+    }
+
+    // nawigacja – jeśli przyszliśmy z TagManager, wróć tam
+    if (returnTo === "TagManager") {
+      nav.navigate("TagManager");
+    } else {
       nav.goBack();
     }
-  }, [name, nav]);
+  }, [name, nav, onTagCreated, returnTo]);
 
   return (
     <View style={styles.container}>

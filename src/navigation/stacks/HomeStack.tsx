@@ -2,6 +2,7 @@
 import * as React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../../screens/HomeScreen";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 function HomeDetailsScreen() {
   return null;
 }
@@ -19,12 +20,12 @@ export default function HomeStack() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: "Home" }}
+        options={{ title: TranslationServiceInstance.t("Home") }}
       />
       <Stack.Screen
         name="HomeDetails"
         component={HomeDetailsScreen}
-        options={{ title: "Szczegóły" }}
+        options={{ title: TranslationServiceInstance.t("Details") }}
       />
     </Stack.Navigator>
   );

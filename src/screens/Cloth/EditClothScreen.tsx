@@ -145,8 +145,8 @@ export default function EditClothScreen() {
       color: color || undefined,
       brand: brand || undefined,
       location: location || undefined,
-      categoryId: category?.id, // ⬅️ przekazujemy wybraną kategorię
-      tagIds: tags.map((t) => String(t.id)), // API wymaga string[], albo zamień na number[] jeśli poprawisz backend!
+      categoryId: category?.id,
+      tagIds: tags.map((t) => t.id),
     });
     setSaving(false);
 
@@ -166,7 +166,7 @@ export default function EditClothScreen() {
         location: location || undefined,
         updatedAt: res.data?.updatedAt ?? "",
       });
-      navigation.goBack();
+      navigation.navigate("Wardrobe");
     }
   }, [
     clothId,
@@ -308,7 +308,9 @@ export default function EditClothScreen() {
         {saving ? (
           <ActivityIndicator />
         ) : (
-          <Text style={styles.saveText}>Save</Text>
+          <Text style={styles.saveText}>
+            {TranslationServiceInstance.t("Save")}
+          </Text>
         )}
       </Pressable>
 
@@ -338,7 +340,11 @@ export default function EditClothScreen() {
         onSelect={(chosen) => setTags(chosen)}
         onAddNew={() => {
           setTagPickerOpen(false);
-          navigation.navigate("AddTag");
+          navigation.navigate("AddTag", {
+            onTagCreated: (tag: Tag) => {
+              setTags((prev) => [...prev, tag]);
+            },
+          });
         }}
       />
     </View>
