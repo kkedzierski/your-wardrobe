@@ -1,4 +1,5 @@
 import { getDb } from "../../../db/database";
+import { Logger } from "../../Kernel/Logger";
 import type { Tag } from "../Domain/Tag";
 
 export async function insertTag({
@@ -35,6 +36,11 @@ export async function insertTag({
     await db.execAsync("COMMIT");
     return { tagId };
   } catch (e) {
+    Logger.error("TagRepository.insertTag: error", {
+      userId,
+      name,
+      error: String(e),
+    });
     await db.execAsync("ROLLBACK");
     throw e;
   }
@@ -132,7 +138,13 @@ export async function updateTag(
     if (!committed) {
       try {
         await db.execAsync("ROLLBACK");
-      } catch {}
+      } catch (e) {
+        Logger.error("TagRepository.updateTag: error", {
+          tagId,
+          userId,
+          error: String(e),
+        });
+      }
     }
     throw e;
   }

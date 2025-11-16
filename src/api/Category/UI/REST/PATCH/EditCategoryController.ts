@@ -1,4 +1,5 @@
 import { Api, ApiErrorCode } from "../../../../Kernel/ApiResponse";
+import { Logger } from "../../../../Kernel/Logger";
 import { processEditCategory } from "../../../Application/Services/EditCategoryHandler";
 import { EditCategoryInput } from "./EditCategoryInput";
 
@@ -26,6 +27,7 @@ export async function editCategory(input: EditCategoryInput) {
     }
     return Api.ok(updated, M.SUCCESS);
   } catch (e) {
+    Logger.error("EditCategoryController error", { error: String(e) });
     return Api.error(ApiErrorCode.INTERNAL, M.FAILED);
   }
 }

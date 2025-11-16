@@ -36,6 +36,7 @@ export default function WelcomeScreen({ navigation }: Props) {
           }}
         >
           <Logo
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
             source={require("../assets/images/logo.png")}
             resizeMode="contain"
           />

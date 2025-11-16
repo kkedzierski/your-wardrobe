@@ -1,12 +1,6 @@
 // src/components/WardrobeFiltersModal.tsx
-import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  View,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import React, { useState, useCallback } from "react";
+import { Modal, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import styled from "styled-components/native";
 import { WardrobeFilter } from "../api/Cloth/Ui/REST/GET/GetClothesCollection/ClothesFilters";
 import { TranslationServiceInstance } from "../i18n/TranslationService";
@@ -34,16 +28,14 @@ const WardrobeFiltersModal: React.FC<Props> = ({
   const [categoryName, setCategoryName] = useState("");
 
   // kiedy otwieramy modal – wczytaj aktualne filtry
-  useEffect(() => {
-    if (!visible) return;
-
+  const syncFromInitialFilters = useCallback(() => {
     setDescription(initialFilters?.description ?? "");
     setBrand(initialFilters?.brand ?? "");
     setColor(initialFilters?.color ?? "");
     setSeason(initialFilters?.season ?? "");
     setLocation(initialFilters?.location ?? "");
     setCategoryName(initialFilters?.categoryName ?? "");
-  }, [visible, initialFilters]);
+  }, [initialFilters]);
 
   const handleApply = () => {
     const next: WardrobeFilter = {
@@ -77,6 +69,7 @@ const WardrobeFiltersModal: React.FC<Props> = ({
       animationType="slide"
       transparent
       onRequestClose={onClose}
+      onShow={syncFromInitialFilters}
     >
       <Backdrop>
         <KeyboardAvoidingView

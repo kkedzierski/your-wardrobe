@@ -81,7 +81,7 @@ const WardrobeGrid = forwardRef<WardrobeGridHandle, Props>(
       } else if (!res.ok) {
         console.warn("Failed to get clothes:", res.message);
       }
-    }, [userId, filters]);
+    }, [filters]);
 
     const reload = useCallback(async () => {
       setRefreshing(true);

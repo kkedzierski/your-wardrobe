@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { getTagsCollection } from "../api/Tag/UI/REST/GET/GetTagsCollection/GetTagsCollectionOutputController";
-import type { GetTagsCollectionOutput } from "../api/Tag/UI/REST/GET/GetTagsCollection/GetTagsCollectionOutput";
 import { Tag } from "../api/Tag/Domain/Tag";
 import { TranslationServiceInstance } from "../i18n/TranslationService";
 
@@ -42,13 +41,30 @@ export default function TagPickerModal({
   // Wczytaj listę tagów po otwarciu
   useEffect(() => {
     if (!visible) return;
-    (async () => {
+
+    let cancelled = false;
+
+    const load = async () => {
       setLoading(true);
       const res = await getTagsCollection();
+      if (cancelled) return;
+
       setLoading(false);
-      if (res.ok && res.data?.items) setItems(res.data.items as Tag[]);
-    })();
-    setChecked(new Set(selected.map((t) => t.id)));
+
+      if (res.ok && res.data?.items) {
+        setItems(res.data.items as Tag[]);
+      }
+
+      // ustaw zaznaczenia na podstawie aktualnego selected
+      setChecked(new Set(selected.map((t) => t.id)));
+    };
+
+    void load();
+
+    // cleanup, żeby nie ustawiać stanu po odmontowaniu
+    return () => {
+      cancelled = true;
+    };
   }, [visible, selected]);
 
   const filtered = useMemo(() => {

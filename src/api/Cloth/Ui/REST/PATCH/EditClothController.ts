@@ -1,4 +1,5 @@
 import { Api, ApiErrorCode } from "../../../../Kernel/ApiResponse";
+import { Logger } from "../../../../Kernel/Logger";
 import { processEditCloth } from "../../../Application/Services/EditClothHandler";
 import { EditClothInput } from "./EditClothInput";
 
@@ -39,6 +40,7 @@ export async function editCloth(input: EditClothInput) {
     // ale zostawiamy je jak w przykładzie DELETE.
     return Api.ok(updated, M.SUCCESS);
   } catch (e) {
+    Logger.error("EditClothController error", { error: String(e) });
     return Api.error(ApiErrorCode.INTERNAL, M.FAILED);
   }
 }

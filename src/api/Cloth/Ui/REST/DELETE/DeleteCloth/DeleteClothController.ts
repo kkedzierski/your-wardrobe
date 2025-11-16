@@ -2,6 +2,7 @@
 import { Api, ApiErrorCode } from "../../../../../Kernel/ApiResponse";
 import { DeleteClothInput } from "./DeleteClothInput";
 import { processDeleteCloth } from "../../../../Application/Services/DeleteClothHandler";
+import { Logger } from "../../../../../Kernel/Logger";
 
 const M = {
   // EN zdania – tłumaczone po stronie ApiResponse
@@ -31,6 +32,7 @@ export async function deleteCloth(input: DeleteClothInput) {
     // Sukces + message (EN; zostanie przetłumaczony do PL na froncie)
     return Api.ok<{ clothId: number }>({ clothId: input.clothId }, M.SUCCESS);
   } catch (e) {
+    Logger.error("DeleteClothController error", { error: String(e) });
     return Api.error(ApiErrorCode.INTERNAL, M.FAILED);
   }
 }

@@ -46,7 +46,7 @@ For full product requirements and user stories, see [`docs/README.md`](docs/READ
 ### Testing
 
 - **Unit & Integration Tests:** [Jest](https://jestjs.io/) + [@testing-library/react-native](https://testing-library.com/docs/react-native-testing-library/intro/) (component/hook tests), [ts-jest](https://kulshekhar.github.io/ts-jest/) (TypeScript), [jest-expo](https://docs.expo.dev/guides/testing-with-jest/), [expo-jest-mocks](https://docs.expo.dev/guides/testing-with-jest/), [msw/native](https://mswjs.io/) (REST mocks)
-- **E2E testing:** [Detox](https://wix.github.io/Detox/) + [expo-dev-client](https://docs.expo.dev/clients/installation/) (Android/iOS), [Maestro Cloud](https://maestro.cloud/) (CTA/user flows), alternatywnie [@expo/e2e](https://github.com/expo/e2e)
+- **E2E testing:** [Maestro](https://maestro.dev)
 
 - **Backend:** Offline-only in MVP (no remote backend); optional future sync (Supabase)
   - Export/Import (backup v1): Planned via ZIP with JSON + thumbnails

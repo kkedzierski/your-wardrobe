@@ -1,7 +1,7 @@
 // src/auth/providers/google.ts
-import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
-import { useEffect } from "react";
+// import * as WebBrowser from "expo-web-browser";
+// import * as Google from "expo-auth-session/providers/google";
+// import { useEffect } from "react";
 
 // Użycie w komponencie jest najprostsze — ale do prostoty zrobimy helper funkcyjny:
 export async function signInWithGoogleAuth(): Promise<{

@@ -31,6 +31,6 @@ Spełnienie wymagań:
 • PRD & dokumenty → katalog docs/ w repo (PRD, SystemDesign, Privacy, TestPlan, Roadmap)
 • Testy:
 ◦ Jednostkowe & integracyjne: Jest + @testing-library/react-native (testy komponentów/hooków), jest-expo, ts-jest (TypeScript), expo-jest-mocks (mocki Expo), msw/native (mock REST API)
-◦ E2E: Detox + expo-dev-client (testy end-to-end na Android/iOS – fizyczne urządzenia i emulatory), Maestro Cloud (skrypty CTA), opcjonalnie @expo/e2e
+◦ E2E: maestro
 • CI/CD → GitHub Actions (testy) + EAS Build/Update
 • ⭐ Opcjonalnie: publiczne wydanie (APK/TestFlight) i/lub strona pod publicznym URL

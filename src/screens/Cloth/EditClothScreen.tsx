@@ -8,12 +8,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import {
-  RouteProp,
-  useRoute,
-  useNavigation,
-  useFocusEffect,
-} from "@react-navigation/native";
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 
 import { editCloth } from "../../api/Cloth/Ui/REST/PATCH/EditClothController";
 import { getClothItem } from "../../api/Cloth/Ui/REST/GET/GetClothItem/GetClothItemController";

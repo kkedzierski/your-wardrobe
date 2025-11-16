@@ -1,4 +1,5 @@
 import { Api, ApiErrorCode } from "../../../../Kernel/ApiResponse";
+import { Logger } from "../../../../Kernel/Logger";
 import { processEditTag } from "../../../Application/Services/EditTagHandler";
 import { EditTagInput } from "./EditTagInput";
 
@@ -26,6 +27,7 @@ export async function editTag(input: EditTagInput) {
     }
     return Api.ok(updated, M.SUCCESS);
   } catch (e) {
+    Logger.error("EditTagController error", { error: String(e) });
     return Api.error(ApiErrorCode.INTERNAL, M.FAILED);
   }
 }

@@ -9,7 +9,10 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "generate:migrations": "ts-node src/db/generateMigrationsRegistry.ts",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "test:unit": "jest",
+    "lint": "eslint . --ext .ts,.tsx",
+    "prepare": "husky"
   },
   "jest": {
     "preset": "jest-expo",
@@ -24,6 +27,7 @@
     "@react-navigation/native": "^7.1.19",
     "@react-navigation/native-stack": "^7.6.2",
     "@react-navigation/stack": "^7.4.10",
+    "eslint-config-expo": "^10.0.0",
     "expo": "^54.0.19",
     "expo-apple-authentication": "~8.0.7",
     "expo-auth-session": "~7.0.8",
@@ -54,13 +58,23 @@
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "29.5.14",
     "@types/react": "~19.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "eslint": "^9.39.1",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
     "jest": "~29.7.0",
     "jest-expo": "~54.0.13",
     "ts-node": "^10.9.2",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.46.4"
   },
   "private": true
 }

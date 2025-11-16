@@ -1,7 +1,7 @@
 // src/components/Fab.tsx
 import React from "react";
 import styled from "styled-components/native";
-import { Pressable, Text } from "react-native";
+import { Pressable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 type Props = { label?: string; onPress?: () => void; iconName?: string };

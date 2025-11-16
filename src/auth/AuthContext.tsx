@@ -15,7 +15,7 @@ type Ctx = {
   /** Logowanie / połączenia */
   connectApple: () => Promise<void>;
   connectGoogle: () => Promise<void>;
-  loginWithEmail: (email: string, password: string) => Promise<void>;
+  loginWithEmail: (email: string) => Promise<void>;
 
   /** „Wyloguj” – wraca do trybu guest; NIE czyści userId/ danych lokalnych */
   disconnect: () => Promise<void>;
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // if (info) await persist({ kind: "oauth", provider: "google", id: info.id, email: info.email, name: info.name });
   };
 
-  const loginWithEmail = async (email: string, password: string) => {
+  const loginWithEmail = async (email: string) => {
     // TODO: Podłącz backend (Supabase/Firebase/własne API)
     // Poniżej stub, który symuluje udane logowanie e-mail/hasło:
     console.log("loginWithEmail()", { email });

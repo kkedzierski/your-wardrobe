@@ -41,18 +41,6 @@ export default function ClothCard({
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<any>(); // lub z typami Twojego stacka
 
-  const confirmDelete = useCallback(() => {
-    Alert.alert(
-      "Usunąć ubranie?",
-      "Tej operacji nie można cofnąć.",
-      [
-        { text: "Anuluj", style: "cancel" },
-        { text: "Usuń", style: "destructive", onPress: handleDelete },
-      ],
-      { cancelable: true }
-    );
-  }, []);
-
   const handleDelete = useCallback(async () => {
     setLoading(true);
     const res = await deleteCloth({ clothId: cloth.id, userId });
@@ -66,6 +54,18 @@ export default function ClothCard({
 
     if (res.ok) onDeleted?.(cloth.id);
   }, [cloth.id, userId, onDeleted]);
+
+  const confirmDelete = useCallback(() => {
+    Alert.alert(
+      "Usunąć ubranie?",
+      "Tej operacji nie można cofnąć.",
+      [
+        { text: "Anuluj", style: "cancel" },
+        { text: "Usuń", style: "destructive", onPress: handleDelete },
+      ],
+      { cancelable: true }
+    );
+  }, [handleDelete]);
 
   const toggleSelect = useCallback(() => {
     onToggleSelect?.(cloth.id);

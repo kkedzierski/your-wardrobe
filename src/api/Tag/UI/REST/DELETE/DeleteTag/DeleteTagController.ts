@@ -1,6 +1,7 @@
 import { Api, ApiErrorCode } from "../../../../../Kernel/ApiResponse";
 import { DeleteTagInput } from "./DeleteTagInput";
 import { processDeleteTag } from "../../../../Application/Services/DeleteTagHandler";
+import { Logger } from "../../../../../Kernel/Logger";
 
 const M = {
   BAD_INPUT: "Invalid request.",
@@ -23,6 +24,7 @@ export async function deleteTag(input: DeleteTagInput) {
     }
     return Api.ok<{ tagId: number }>({ tagId: input.tagId }, M.SUCCESS);
   } catch (e) {
+    Logger.error("DeleteTagController error", { error: String(e) });
     return Api.error(ApiErrorCode.INTERNAL, M.FAILED);
   }
 }

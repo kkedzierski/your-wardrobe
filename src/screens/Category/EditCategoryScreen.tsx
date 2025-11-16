@@ -21,31 +21,19 @@ export default function EditCategoryScreen() {
   const route = useRoute<any>();
   const category = route.params?.category;
 
-  // awaryjnie, gdyby ktoś wszedł tu bez category
-  if (!category) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.label}>
-          {TranslationServiceInstance.t("Category not found.")}
-        </Text>
-      </View>
-    );
-  }
-
-  const [name, setName] = useState<string>(category.name ?? "");
+  // hooki MUSZĄ być zawsze wywołane — nawet jeśli category jest undefined
+  const [name, setName] = useState<string>(category?.name ?? "");
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
 
   const onSave = useCallback(async () => {
+    if (!category) return; // dodatkowe zabezpieczenie
+
     const trimmed = name.trim();
 
-    // lokalna walidacja – też przez showNoticeForApi,
-    // żeby zachować ten sam UX co dla błędów z backendu
     if (trimmed.length < 2) {
       showNoticeForApi({ ok: false, message: "Minimum 2 characters" } as any, {
         titleError: "Error",
-        // można dać translate: true (domyślne), więc "Minimum 2 characters"
-        // i "Error" polecą przez TranslationService
       });
       return;
     }
@@ -57,12 +45,6 @@ export default function EditCategoryScreen() {
     });
     setSaving(false);
 
-    // Backend powinien ustawić message, np.:
-    // - "Category name updated."
-    // - "Category was not found."
-    // - "Failed to update category."
-    // showNoticeForApi najpierw spróbuje użyć res.message,
-    // a gdy jej nie będzie, użyje fallbackSuccessMsg.
     showNoticeForApi(res, {
       titleSuccess: "Success",
       fallbackSuccessMsg: "Category name updated.",
@@ -75,6 +57,8 @@ export default function EditCategoryScreen() {
   }, [name, category, nav]);
 
   const onDelete = useCallback(() => {
+    if (!category) return; // dodatkowe zabezpieczenie
+
     Alert.alert(
       TranslationServiceInstance.t("Delete category?"),
       TranslationServiceInstance.t(
@@ -93,12 +77,6 @@ export default function EditCategoryScreen() {
             const res = await deleteCategory({ categoryId: category.id });
             setRemoving(false);
 
-            // Backend powinien zwracać message np.:
-            // - "Category deleted."
-            // - "Category was not found."
-            // - "Category cannot be deleted because it is assigned to some clothes."
-            // - "Failed to delete category."
-            // showNoticeForApi pokaże dokładnie ten message (przetłumaczony przez t()).
             showNoticeForApi(res, {
               titleSuccess: "Success",
               fallbackSuccessMsg: "Category deleted.",
@@ -113,6 +91,17 @@ export default function EditCategoryScreen() {
       ]
     );
   }, [category, nav]);
+
+  // dopiero TERAZ możemy warunkowo coś zwrócić
+  if (!category) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.label}>
+          {TranslationServiceInstance.t("Category not found.")}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

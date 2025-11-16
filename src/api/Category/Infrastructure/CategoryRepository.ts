@@ -169,7 +169,13 @@ export async function updateCategory(
     if (!committed) {
       try {
         await db.execAsync("ROLLBACK");
-      } catch {}
+      } catch (e) {
+        Logger.error("CategoryRepository.updateCategory: error", {
+          categoryId,
+          userId,
+          error: String(e),
+        });
+      }
     }
     throw e;
   }

@@ -1,5 +1,5 @@
-// src/screens/CategoryManagerScreen.tsx
-import React, { useEffect, useState, useCallback } from "react";
+// src/screens/Category/CategoryManagerScreen.tsx
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,11 +12,9 @@ import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { showNoticeForApi } from "../../ui/apiNotice";
 
-// ⬅️ dopasuj ścieżki
 import type { Category } from "../../api/Category/Domain/Category";
 import { getCategoriesCollection } from "../../api/Category/UI/REST/GET/GetCategoriesCollection/GetCategoriesCollectionOutputController";
 
-// ten sam komponent co w ShowClothScreen
 import UiButton from "../../components/UiButton";
 import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
@@ -25,10 +23,36 @@ export default function CategoryManagerScreen() {
   const [items, setItems] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async (showSuccess = false) => {
-    setLoading(true);
+  // efekt tylko do pierwszego załadowania
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchInitial = async () => {
+      const res = await getCategoriesCollection();
+
+      if (cancelled) {
+        return;
+      }
+
+      if (res.ok && res.data) {
+        setItems(res.data.items ?? []);
+      } else {
+        showNoticeForApi(res, { titleError: "Failed to load categories." });
+      }
+
+      setLoading(false);
+    };
+
+    void fetchInitial();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // loader używany tylko z przycisku Refresh
+  const load = async (showSuccess = false) => {
     const res = await getCategoriesCollection();
-    setLoading(false);
 
     if (res.ok && res.data) {
       setItems(res.data.items ?? []);
@@ -37,11 +61,9 @@ export default function CategoryManagerScreen() {
         showNoticeForApi(res, { titleError: "Failed to load categories." });
       }
     }
-  }, []);
 
-  useEffect(() => {
-    load(false);
-  }, [load]);
+    setLoading(false);
+  };
 
   const goEdit = (item: Category) => {
     nav.navigate("EditCategory", { category: item });
@@ -82,7 +104,10 @@ export default function CategoryManagerScreen() {
           title="Refresh"
           variant="ghost"
           iconLeftName="refresh-ccw"
-          onPress={() => load(true)}
+          onPress={() => {
+            setLoading(true);
+            void load(true);
+          }}
           style={{ flex: 1 }}
         />
 
@@ -113,7 +138,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 
-  container: { flex: 1, padding: 12 },
+  container: {
+    flex: 1,
+    padding: 12,
+  },
 
   row: {
     paddingVertical: 14,
@@ -124,7 +152,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  rowText: { fontSize: 16, color: "#111" },
+
+  rowText: {
+    fontSize: 16,
+    color: "#111",
+  },
 
   actionBar: {
     position: "absolute",

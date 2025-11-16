@@ -1,0 +1,7 @@
+echo "🧪 Uruchamiam testy jednostkowe"
+npm run test:unit
+
+echo "📏 Sprawdzam lint (ESLint)..."
+npm run lint
+
+

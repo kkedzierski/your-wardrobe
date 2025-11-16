@@ -557,7 +557,13 @@ export async function updateCloth(
     if (!committed) {
       try {
         await db.execAsync("ROLLBACK");
-      } catch {}
+      } catch (e) {
+        Logger.error("ClothRepository.updateCloth: error", {
+          clothId,
+          userId,
+          error: String(e),
+        });
+      }
     }
     Logger.error("ClothRepository.updateCloth: error", {
       clothId,
@@ -812,7 +818,13 @@ export async function replaceClothTags(
   } catch (e) {
     try {
       await db.execAsync("ROLLBACK");
-    } catch {}
+    } catch (e) {
+      Logger.error("ClothRepository.replaceClothTags: error", {
+        clothId,
+        userId,
+        error: String(e),
+      });
+    }
     Logger.error("ClothRepository.replaceClothTags: error", {
       clothId,
       userId,

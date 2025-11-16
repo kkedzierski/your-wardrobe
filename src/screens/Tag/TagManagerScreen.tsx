@@ -1,5 +1,5 @@
 // src/screens/Tag/TagManagerScreen.tsx
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -21,24 +21,48 @@ export default function TagManagerScreen() {
   const [items, setItems] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async (showSuccess = false) => {
+  // efekt tylko do pierwszego załadowania
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchInitial = async () => {
+      setLoading(true);
+      const res = await getTagsCollection();
+
+      if (cancelled) return;
+
+      if (res.ok && res.data) {
+        setItems(res.data.items ?? []);
+      } else {
+        showNoticeForApi(res, { titleError: "Failed to load tags." });
+      }
+
+      setLoading(false);
+    };
+
+    void fetchInitial();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // loader używany tylko z przycisku Refresh
+  const load = async (showSuccess = false) => {
     setLoading(true);
     const res = await getTagsCollection();
-    setLoading(false);
 
     if (res.ok && res.data) {
       setItems(res.data.items ?? []);
-      // opcjonalnie: showSuccess => pokaż komunikat "odświeżono"
+      // opcjonalnie: jak showSuccess === true, możesz pokazać toast "Odświeżono"
     } else {
       if (!showSuccess) {
         showNoticeForApi(res, { titleError: "Failed to load tags." });
       }
     }
-  }, []);
 
-  useEffect(() => {
-    load(false);
-  }, [load]);
+    setLoading(false);
+  };
 
   const goEdit = (item: Tag) => {
     nav.navigate("EditTag", { tag: item });
@@ -79,7 +103,9 @@ export default function TagManagerScreen() {
           title="Refresh"
           variant="ghost"
           iconLeftName="refresh-ccw"
-          onPress={() => load(true)}
+          onPress={() => {
+            void load(true);
+          }}
           style={{ flex: 1 }}
         />
 

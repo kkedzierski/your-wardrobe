@@ -4,6 +4,7 @@ import {
   ApiErrorCode,
   ApiResponse,
 } from "../../../../../Kernel/ApiResponse";
+import { Logger } from "../../../../../Kernel/Logger";
 import { getAllTags } from "../../../../Infrastructure/TagRepository";
 import type { GetTagsCollectionOutput } from "./GetTagsCollectionOutput";
 
@@ -45,6 +46,9 @@ export async function getTagsCollection(
     };
     return Api.ok<GetTagsCollectionOutput>(data);
   } catch (error) {
+    Logger.error("GetTagsCollectionOutputController error", {
+      error: String(error),
+    });
     return Api.error(ApiErrorCode.INTERNAL, "Failed to get tags.");
   }
 }

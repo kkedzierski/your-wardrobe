@@ -4,6 +4,7 @@ import {
   ApiErrorCode,
   ApiResponse,
 } from "../../../../../Kernel/ApiResponse";
+import { Logger } from "../../../../../Kernel/Logger";
 import { getTagById } from "../../../../Infrastructure/TagRepository";
 import type { GetTagItemInput } from "./GetTagItemInput";
 import type { GetTagItemOutput } from "./GetTagItemOutput";
@@ -30,6 +31,7 @@ export async function getTagItem(
     };
     return Api.ok<GetTagItemOutput>(data);
   } catch (error) {
+    Logger.error("GetTagItemController error", { error: String(error) });
     return Api.error(ApiErrorCode.INTERNAL, "Failed to get tag.");
   }
 }

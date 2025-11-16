@@ -46,19 +46,16 @@ export function ShowClothScreenView({ clothId }: Props) {
     | null
   >(null);
 
-  const load = React.useCallback(
-    async (showSuccess = false) => {
-      setLoading(true);
-      const res = await getClothItem({ id: clothId });
-      if (res.ok) {
-        setData(res.data as any);
-      } else {
-        showNoticeForApi(res, { titleError: "Couldn't get cloth" });
-      }
-      setLoading(false);
-    },
-    [clothId]
-  );
+  const load = React.useCallback(async () => {
+    setLoading(true);
+    const res = await getClothItem({ id: clothId });
+    if (res.ok) {
+      setData(res.data as any);
+    } else {
+      showNoticeForApi(res, { titleError: "Couldn't get cloth" });
+    }
+    setLoading(false);
+  }, [clothId]);
 
   React.useEffect(() => {
     load(false);
