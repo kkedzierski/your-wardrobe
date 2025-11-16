@@ -1,17 +1,26 @@
 // src/components/Fab.tsx
 import React from "react";
 import styled from "styled-components/native";
-import { MotiPressable } from "moti/interactions";
+import { Pressable, Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 type Props = { label?: string; onPress?: () => void; iconName?: string };
 
-export default function Fab({ label, onPress, iconName = "plus" }: Props) {
+export default function Fab({
+  label,
+  onPress,
+  iconName = "plus",
+  testID,
+  accessibilityLabel,
+}: Props) {
   return (
-    <Wrapper pointerEvents="box-none">
-      <MotiPressable
+    <Wrapper
+      pointerEvents="box-none"
+      testID={testID}
+      accessibilityLabel={accessibilityLabel}
+    >
+      <Pressable
         onPress={onPress}
-        animate={({ pressed }) => ({ scale: pressed ? 0.97 : 1 })}
         transition={{ type: "timing", duration: 120 }}
         accessibilityRole="button"
         accessibilityLabel={label ?? "Dodaj"}
@@ -23,7 +32,7 @@ export default function Fab({ label, onPress, iconName = "plus" }: Props) {
             color="#fff"
           />
         </Btn>
-      </MotiPressable>
+      </Pressable>
     </Wrapper>
   );
 }

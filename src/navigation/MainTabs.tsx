@@ -5,16 +5,15 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeStack from "./stacks/HomeStack";
 import WardrobeStack from "./stacks/WardrobeStack";
 import OutfitStack from "./stacks/OutfitStack";
-import ProfileStack from "./stacks/ProfileStack";
 import SettingsStack from "./stacks/SettingsStack";
-import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
+import { Pressable } from "react-native";
 
 export type MainTabParamList = {
   HomeTab: undefined;
   WardrobeTab: undefined;
   OutfitTab: undefined;
-  ProfileTab: undefined;
   SettingsTab: undefined;
 };
 
@@ -44,7 +43,8 @@ export default function MainTabs() {
         name="HomeTab"
         component={HomeStack}
         options={{
-          title: "Home",
+          title: TranslationServiceInstance.t("Home"),
+          tabBarAccessibilityLabel: TranslationServiceInstance.t("Home tab"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="home-variant"
@@ -52,13 +52,26 @@ export default function MainTabs() {
               color={color}
             />
           ),
+          tabBarButton: (props: any) => (
+            <Pressable
+              onPress={props.onPress}
+              style={props.style}
+              accessibilityLabel={props.accessibilityLabel}
+              accessibilityState={props.accessibilityState}
+              testID="HomeTab"
+            >
+              {props.children}
+            </Pressable>
+          ),
         }}
       />
       <Tab.Screen
         name="WardrobeTab"
         component={WardrobeStack}
         options={{
-          title: "Garderoba",
+          title: TranslationServiceInstance.t("Wardrobe"),
+          tabBarAccessibilityLabel:
+            TranslationServiceInstance.t("Wardrobe tab"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="tshirt-crew-outline"
@@ -66,15 +79,38 @@ export default function MainTabs() {
               color={color}
             />
           ),
+          tabBarButton: (props: any) => (
+            <Pressable
+              onPress={props.onPress}
+              style={props.style}
+              accessibilityLabel={props.accessibilityLabel}
+              accessibilityState={props.accessibilityState}
+              testID="WardrobeTab"
+            >
+              {props.children}
+            </Pressable>
+          ),
         }}
       />
       <Tab.Screen
         name="OutfitTab"
         component={OutfitStack}
         options={{
-          title: "Outfit",
+          title: TranslationServiceInstance.t("Outfits"),
+          tabBarAccessibilityLabel: TranslationServiceInstance.t("Outfit tab"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="hanger" size={size} color={color} />
+          ),
+          tabBarButton: (props: any) => (
+            <Pressable
+              onPress={props.onPress}
+              style={props.style}
+              accessibilityLabel={props.accessibilityLabel}
+              accessibilityState={props.accessibilityState}
+              testID="OutfitTab"
+            >
+              {props.children}
+            </Pressable>
           ),
         }}
       />
@@ -82,13 +118,26 @@ export default function MainTabs() {
         name="SettingsTab"
         component={SettingsStack}
         options={{
-          title: "Ustawienia",
+          title: TranslationServiceInstance.t("Settings"),
+          tabBarAccessibilityLabel:
+            TranslationServiceInstance.t("Settings tab"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="cog-outline"
               size={size}
               color={color}
             />
+          ),
+          tabBarButton: (props: any) => (
+            <Pressable
+              onPress={props.onPress}
+              style={props.style}
+              accessibilityLabel={props.accessibilityLabel}
+              accessibilityState={props.accessibilityState}
+              testID="SettingsTab"
+            >
+              {props.children}
+            </Pressable>
           ),
         }}
       />

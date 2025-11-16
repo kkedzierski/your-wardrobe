@@ -44,7 +44,7 @@ export default function RootNavigator() {
         screenOptions={{
           headerShown: false,
           animation: "fade",
-          headerBackTitle: TranslationServiceInstance.t("Back"), // np. "Wstecz"
+          headerBackTitle: TranslationServiceInstance.t("Back"),
         }}
       >
         <Stack.Screen name="Welcome" component={WelcomeScreen} />

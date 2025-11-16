@@ -15,7 +15,10 @@ export default function WelcomeScreen({ navigation }: Props) {
   const reduce = useReducedMotion();
 
   return (
-    <Container>
+    <Container
+      testID="WelcomeScreen"
+      accessibilityLabel={TranslationServiceInstance.t("Welcome screen")}
+    >
       {/* Logo: fade+scale-in, a potem subtelne „pływanie” góra-dół */}
       <MotiView
         from={{ opacity: 0, scale: 0.9, translateY: 10 }}
@@ -77,6 +80,8 @@ export default function WelcomeScreen({ navigation }: Props) {
         <AnimatedButton
           label={TranslationServiceInstance.t("Let's start!")}
           onPress={() => navigation.navigate("MainTabs")}
+          testID="WelcomeStartButton"
+          accessibilityLabel={TranslationServiceInstance.t("Let's start!")}
         />
       </CTAWrapper>
     </Container>

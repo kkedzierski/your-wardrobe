@@ -1,0 +1,27 @@
+appId: com.twojafirma.yourwardrobe
+---
+- launchApp
+
+# Tymczasowo:
+- tapOn:
+    point: 92%,92%
+
+- assertVisible:
+    id: "WelcomeScreen"
+
+- tapOn:
+    id: WelcomeStartButton
+- assertVisible:
+    id: "HomeScreen"
+
+- tapOn:
+    id: "WardrobeTab"
+
+- tapOn:
+    id: "OutfitTab"
+
+- tapOn:
+    id: "SettingsTab"
+
+- tapOn:
+    id: "HomeTab"

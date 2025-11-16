@@ -14,6 +14,7 @@ import { Feather } from "@expo/vector-icons";
 import { getTagsCollection } from "../api/Tag/UI/REST/GET/GetTagsCollection/GetTagsCollectionOutputController";
 import type { GetTagsCollectionOutput } from "../api/Tag/UI/REST/GET/GetTagsCollection/GetTagsCollectionOutput";
 import { Tag } from "../api/Tag/Domain/Tag";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 // Typy przekazywanych propsów
 export type TagPickerModalProps = {
@@ -81,8 +82,13 @@ export default function TagPickerModal({
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
           <View style={styles.header}>
-            <Text style={styles.title}>Wybierz tagi</Text>
-            <Pressable onPress={onClose} accessibilityLabel="Zamknij">
+            <Text style={styles.title}>
+              {TranslationServiceInstance.t("Select tags")}
+            </Text>
+            <Pressable
+              onPress={onClose}
+              accessibilityLabel={TranslationServiceInstance.t("Close")}
+            >
               <Feather name="x" size={20} />
             </Pressable>
           </View>
@@ -90,7 +96,7 @@ export default function TagPickerModal({
           <View style={styles.search}>
             <Feather name="search" size={16} />
             <TextInput
-              placeholder="Szukaj tagu..."
+              placeholder={TranslationServiceInstance.t("Search tag")}
               value={q}
               onChangeText={setQ}
               style={{ flex: 1, marginLeft: 6 }}
@@ -114,7 +120,9 @@ export default function TagPickerModal({
                 </Pressable>
               )}
               ListEmptyComponent={
-                <Text style={{ padding: 16, color: "#666" }}>Brak tagów</Text>
+                <Text style={{ padding: 16, color: "#666" }}>
+                  {TranslationServiceInstance.t("No tags")}
+                </Text>
               }
             />
           )}
@@ -122,16 +130,20 @@ export default function TagPickerModal({
           <Pressable
             style={styles.addBtn}
             onPress={onAddNew}
-            accessibilityLabel="Dodaj nowy tag"
+            accessibilityLabel={TranslationServiceInstance.t("Add new tag")}
           >
             <Feather name="plus" size={16} />
-            <Text style={{ marginLeft: 8, color: "#111" }}>Dodaj tag</Text>
+            <Text style={{ marginLeft: 8, color: "#111" }}>
+              {TranslationServiceInstance.t("Add tag")}
+            </Text>
           </Pressable>
           <Pressable
             style={[styles.saveBtn, { marginTop: 8 }]}
             onPress={handleSave}
           >
-            <Text style={styles.saveBtnText}>Zatwierdź wybór</Text>
+            <Text style={styles.saveBtnText}>
+              {TranslationServiceInstance.t("Confirm selection")}
+            </Text>
           </Pressable>
         </View>
       </View>

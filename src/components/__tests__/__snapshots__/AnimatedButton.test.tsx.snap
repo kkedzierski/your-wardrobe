@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AnimatedButton pasuje do snapshotu 1`] = `
+<View
+  accessibilityState={
+    {
+      "busy": undefined,
+      "checked": undefined,
+      "disabled": undefined,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#4a90e2",
+        "borderBottomLeftRadius": 20,
+        "borderBottomRightRadius": 20,
+        "borderTopLeftRadius": 20,
+        "borderTopRightRadius": 20,
+        "justifyContent": "center",
+        "paddingBottom": 14,
+        "paddingLeft": 28,
+        "paddingRight": 28,
+        "paddingTop": 14,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#fff",
+          "fontSize": 16,
+          "fontWeight": "700",
+        }
+      }
+    >
+      Snapshot
+    </Text>
+  </View>
+</View>
+`;

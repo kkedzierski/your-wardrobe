@@ -21,7 +21,12 @@ export default function WardrobeStack() {
       <Stack.Screen
         name="Wardrobe"
         component={WardrobeScreen}
-        options={{ title: TranslationServiceInstance.t("Wardrobe") }}
+        options={{
+          title: TranslationServiceInstance.t("Wardrobe"),
+          testID: "WardrobeTab",
+          tabBarAccessibilityLabel:
+            TranslationServiceInstance.t("Wardrobe tab"),
+        }}
       />
       <Stack.Screen
         name="WardrobeDetails"

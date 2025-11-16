@@ -16,10 +16,10 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
 4. Obsługa atrybutów (atrybuty nie są wymagane): kolor, rozmiar, marka, sezon, lokalizacja
 5. Mechanizm tagowania wielowartościowego oraz możliwość edycji kategorii/tagów przez użytkownika
 6. Automatyczna propozycja kategorii/atrybutów przez AI z mechanizmem potwierdzania/korekty przez użytkownika
-7. Kolejka synchronizacji offline z obsługą limitów (500 MB/500 zdjęć), trybu Wi-Fi domyślnie, backoff i ekranem zarządzania zadaniami
+7. Kolejka synchronizacji offline z obsługą limitów (500 MB/500 zdjęć), trybu Wi-Fi domyślnie, backoff i ekranem zarządzania zadaniami po MVP
 8. Media pipeline: upload ≤ 3 MB/zdjęcie, generowanie 3 rozmiarów, lokalny cache, opcjonalne usuwanie tła
 9. Profile użytkowników: tryb gościa, przejście na konto przez e-mail z magic link, szyfrowanie danych lokalnie i w tranzycie, „tylko Wi-Fi”
-10. Szybkie wyszukiwanie, inteligentne listy (ostatnio dodane, nieużywane 90 dni, „piwnica”), filtry po atrybutach
+10. Szybkie wyszukiwanie, inteligentne listy (ostatnio dodane, nieużywane 90 dni, „piwnica” po MVP ), filtry po atrybutach
 11. Zgody na przetwarzanie danych, twarde usunięcie danych na żądanie, zgodność z RODO
 
 ## 4. Granice produktu
@@ -40,7 +40,7 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
 - Opis: Jako użytkownik chcę dodać nowe ubranie, wykonać jedno lub kilka zdjęć, przypisać kategorię/atrybuty i zapisać je w katalogu offline.
 - Kryteria akceptacji:
   - Ubranie posiada co najmniej jedno zdjęcie
-  - Możliwość dodania wielu zdjęć
+  - Możliwość dodania wielu zdjęć po MVP
   - Możliwość przypisania kategorii/atrybutów ręcznie lub przez AI po MVP
 
 ### US-002: Kategoryzacja AI po MVP
@@ -69,21 +69,20 @@ Użytkownicy nie wiedzą dokładnie, jakie ubrania posiadają i gdzie są one pr
   - Możliwość przypisania kategorii/tagów z listy lub własnych
   - Edycja i usuwanie kategorii/tagów
 
-### US-005: Szybkie wyszukiwanie i smart listy
+### US-005: Szybkie wyszukiwanie
 
 - Tytuł: Intuicyjne wyszukiwanie oraz listy
-- Opis: Jako użytkownik chcę wyszukiwać ubrania po dowolnym atrybucie i korzystać z gotowych list (ostatnio dodane, nieużywane, w piwnicy).
+- Opis: Jako użytkownik chcę wyszukiwać ubrania po dowolnym atrybucie.
 - Kryteria akceptacji:
   - Szybka wyszukiwarka
-  - Gotowe filtry/listy (ostatnio dodane, nieużywane 90 dni, piwnica)
 
-### US-006: Masowe akcje i zarządzanie lokalizacją/sezonem
+### US-006: Masowe akcje usunięcia
 
-- Tytuł: Zarządzanie sezonami i lokalizacjami
-- Opis: Jako użytkownik chcę oznaczać ubrania masowo jako sezonowe lub zmieniać lokalizację przechowywania (np. przenieść do piwnicy).
+- Tytuł: Usunięcie masowo ubrań
+- Opis: Jako użytkownik chcę zaznaczyć ubrania masowo i usunąć
 - Kryteria akceptacji:
   - Wybór wielu elementów
-  - Masowe akcje: zmiana sezonu/lokalizacji, oznaczenie jako sezonowe
+  - Masowa akcja: usunięcie
 
 ### US-008: Obsługa konta użytkownika i bezpieczeństwo
 

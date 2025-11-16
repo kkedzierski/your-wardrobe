@@ -80,7 +80,10 @@ export default function SettingsScreen() {
   };
 
   return (
-    <Container>
+    <Container
+      testID="SettingsScreen"
+      accessibilityLabel={TranslationServiceInstance.t("Settings screen")}
+    >
       <SectionTitle>Ustawienia</SectionTitle>
 
       {/* Użytkownik */}

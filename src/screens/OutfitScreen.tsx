@@ -6,7 +6,10 @@ import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 export default function OutfitScreen() {
   return (
-    <Container accessibilityLabel="Widok Strojów">
+    <Container
+      testID="OutfitScreen"
+      accessibilityLabel={TranslationServiceInstance.t("Outfit screen")}
+    >
       <Title>{TranslationServiceInstance.t("Outfits")}</Title>
       <Subtitle>
         {TranslationServiceInstance.t("Your outfits and styles")}

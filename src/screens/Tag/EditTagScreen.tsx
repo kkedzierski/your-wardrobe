@@ -76,11 +76,13 @@ export default function EditTagScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Nazwa tagu</Text>
+      <Text style={styles.label}>
+        {TranslationServiceInstance.t("Tag name")}
+      </Text>
       <TextInput
         value={name}
         onChangeText={setName}
-        placeholder="np. Klasyka"
+        placeholder={TranslationServiceInstance.t("e.g. Classic")}
         style={styles.input}
       />
       <Pressable
@@ -91,7 +93,9 @@ export default function EditTagScreen() {
         {saving ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.saveBtnText}>Zapisz</Text>
+          <Text style={styles.saveBtnText}>
+            {TranslationServiceInstance.t("Save")}
+          </Text>
         )}
       </Pressable>
 
@@ -103,7 +107,9 @@ export default function EditTagScreen() {
         {removing ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.deleteBtnText}>Usuń tag</Text>
+          <Text style={styles.deleteBtnText}>
+            {TranslationServiceInstance.t("Delete tag")}
+          </Text>
         )}
       </Pressable>
     </View>

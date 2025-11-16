@@ -3,10 +3,10 @@ import { Migration, MigrationResult } from "./Migration";
 import { getUpMigrations, getDownMigrations } from "./MigrationsRegistry";
 
 export class MigrationManager {
-  private dbPromise = getDb();
-
   private async db() {
-    return await this.dbPromise;
+    // za każdym razem leci przez getDb(),
+    // które i tak zwróci cache'owane połączenie (albo otworzy nowe po resetDatabase)
+    return await getDb();
   }
 
   // już nam niepotrzebne splitSqlStatements jeżeli lecimy jednym execAsync

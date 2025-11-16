@@ -13,6 +13,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { Category } from "../api/Category/Domain/Category";
 import { getCategoriesCollection } from "../api/Category/UI/REST/GET/GetCategoriesCollection/GetCategoriesCollectionOutputController";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 type Props = {
   visible: boolean;
@@ -57,8 +58,13 @@ export default function CategoryPickerModal({
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
           <View style={styles.header}>
-            <Text style={styles.title}>Wybierz kategorię</Text>
-            <Pressable onPress={onClose} accessibilityLabel="Zamknij">
+            <Text style={styles.title}>
+              {TranslationServiceInstance.t("Select category")}
+            </Text>
+            <Pressable
+              onPress={onClose}
+              accessibilityLabel={TranslationServiceInstance.t("Close")}
+            >
               <Feather name="x" size={20} />
             </Pressable>
           </View>
@@ -66,7 +72,7 @@ export default function CategoryPickerModal({
           <View style={styles.search}>
             <Feather name="search" size={16} />
             <TextInput
-              placeholder="Szukaj..."
+              placeholder={TranslationServiceInstance.t("Search")}
               value={q}
               onChangeText={setQ}
               style={{ flex: 1, marginLeft: 6 }}
@@ -103,11 +109,13 @@ export default function CategoryPickerModal({
           <Pressable
             style={styles.addBtn}
             onPress={onAddNew}
-            accessibilityLabel="Dodaj nową kategorię"
+            accessibilityLabel={TranslationServiceInstance.t(
+              "Add new category"
+            )}
           >
             <Feather name="plus" size={16} />
             <Text style={{ marginLeft: 8, color: "#111" }}>
-              Dodaj kategorię
+              {TranslationServiceInstance.t("Add category")}
             </Text>
           </Pressable>
         </View>

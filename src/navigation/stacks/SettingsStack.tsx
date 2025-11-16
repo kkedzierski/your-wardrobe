@@ -20,7 +20,12 @@ export default function SettingsStack() {
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: TranslationServiceInstance.t("Settings") }}
+        options={{
+          title: TranslationServiceInstance.t("Settings"),
+          testID: "SettingsTab",
+          tabBarAccessibilityLabel:
+            TranslationServiceInstance.t("Settings tab"),
+        }}
       />
       <Stack.Screen
         name="SettingsDetails"

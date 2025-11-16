@@ -69,10 +69,16 @@ export default function AddTagScreen() {
   }, [name, nav, onTagCreated, returnTo]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Nazwa tagu</Text>
+    <View
+      style={styles.container}
+      testID="AddTagScreen"
+      accessibilityLabel={TranslationServiceInstance.t("Add tag screen")}
+    >
+      <Text style={styles.label}>
+        {TranslationServiceInstance.t("Tag name")}
+      </Text>
       <TextInput
-        placeholder="np. Vintage"
+        placeholder={TranslationServiceInstance.t("e.g. Vintage")}
         value={name}
         onChangeText={setName}
         style={styles.input}
@@ -83,11 +89,15 @@ export default function AddTagScreen() {
         style={[styles.saveBtn, saving && { opacity: 0.6 }]}
         onPress={onSave}
         disabled={saving}
+        accessibilityLabel={TranslationServiceInstance.t("Save button")}
+        testID="SaveButton"
       >
         {saving ? (
           <ActivityIndicator />
         ) : (
-          <Text style={styles.saveText}>Zapisz</Text>
+          <Text style={styles.saveText}>
+            {TranslationServiceInstance.t("Save")}
+          </Text>
         )}
       </Pressable>
     </View>

@@ -20,7 +20,11 @@ export default function OutfitStack() {
       <Stack.Screen
         name="Outfit"
         component={OutfitScreen}
-        options={{ title: TranslationServiceInstance.t("Outfits") }}
+        options={{
+          title: TranslationServiceInstance.t("Outfits"),
+          testID: "OutfitTab",
+          tabBarAccessibilityLabel: TranslationServiceInstance.t("Outfit tab"),
+        }}
       />
       <Stack.Screen
         name="OutfitDetails"

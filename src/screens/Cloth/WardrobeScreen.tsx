@@ -4,7 +4,6 @@ import styled from "styled-components/native";
 import { Pressable, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
-
 import WardrobeGrid, {
   WardrobeGridHandle,
 } from "../../components/WardrobeGrid";
@@ -121,7 +120,10 @@ export default function WardrobeScreen() {
   }, [gridRef]);
 
   return (
-    <Container accessibilityLabel="Widok Garderoby">
+    <Container
+      testID="WardrobeScreen"
+      accessibilityLabel={TranslationServiceInstance.t("Wardrobe screen")}
+    >
       <Header>
         <View>
           <Title>{TranslationServiceInstance.t("Wardrobe")}</Title>
@@ -129,26 +131,50 @@ export default function WardrobeScreen() {
         </View>
 
         <HeaderActions>
-          <SmallBtn onPress={onOpenFilters} accessibilityLabel="Filtry">
+          <SmallBtn
+            onPress={onOpenFilters}
+            accessibilityLabel={TranslationServiceInstance.t("Filters")}
+            testID="FiltersButton"
+          >
             <Feather name="sliders" size={16} />
-            <SmallBtnText>Filtry</SmallBtnText>
+            <SmallBtnText>
+              {TranslationServiceInstance.t("Filters")}
+            </SmallBtnText>
           </SmallBtn>
 
           {!!activeFilters.length && (
-            <SmallBtn onPress={clearFilters} accessibilityLabel="Usuń filtry">
+            <SmallBtn
+              onPress={clearFilters}
+              accessibilityLabel={TranslationServiceInstance.t(
+                "Remove filters"
+              )}
+              testID="RemoveFiltersButton"
+            >
               <Feather name="x-circle" size={16} />
-              <SmallBtnText>Usuń filtry</SmallBtnText>
+              <SmallBtnText>
+                {TranslationServiceInstance.t("Remove filters")}
+              </SmallBtnText>
             </SmallBtn>
           )}
 
-          <SmallBtn onPress={onOpenCategories} accessibilityLabel="Kategorie">
+          <SmallBtn
+            onPress={onOpenCategories}
+            accessibilityLabel={TranslationServiceInstance.t("Categories")}
+            testID="CategoriesButton"
+          >
             <Feather name="folder" size={16} />
-            <SmallBtnText>Kategorie</SmallBtnText>
+            <SmallBtnText>
+              {TranslationServiceInstance.t("Categories")}
+            </SmallBtnText>
           </SmallBtn>
 
-          <SmallBtn onPress={onOpenTagsManager} accessibilityLabel="Tagi">
+          <SmallBtn
+            onPress={onOpenTagsManager}
+            accessibilityLabel={TranslationServiceInstance.t("Tags")}
+            testID="TagsButton"
+          >
             <Feather name="tag" size={16} />
-            <SmallBtnText>Tagi</SmallBtnText>
+            <SmallBtnText>{TranslationServiceInstance.t("Tags")}</SmallBtnText>
           </SmallBtn>
         </HeaderActions>
       </Header>
@@ -167,7 +193,9 @@ export default function WardrobeScreen() {
       <WardrobeGrid ref={gridRef} filters={filters} />
 
       <RefreshPill
-        label="Odśwież"
+        testID="RefreshButton"
+        accessibilityLabel={TranslationServiceInstance.t("Refresh button")}
+        label={TranslationServiceInstance.t("Refresh")}
         onPress={() => gridRef.current?.reload()}
         disabled={busy}
       />
@@ -176,8 +204,13 @@ export default function WardrobeScreen() {
         label={busy ? "…" : "+"}
         onPress={handleFabPress}
         disabled={busy}
-        accessibilityLabel="Dodaj nowe ubranie z aparatu"
-        accessibilityHint="Otworzy aparat i doda zdjęcie ubrania do garderoby"
+        testID="AddNewClothingFromCameraButton"
+        accessibilityLabel={TranslationServiceInstance.t(
+          "Add new clothing from camera button"
+        )}
+        accessibilityHint={TranslationServiceInstance.t(
+          "Open the camera and add a photo of clothing to the wardrobe"
+        )}
       />
       <TagPickerModal
         visible={isTagPickerOpen}

@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native"; // ⬅️
 
 import { deleteCloth } from "../api/Cloth/Ui/REST/DELETE/DeleteCloth/DeleteClothController";
 import { showNoticeForApi } from "../ui/apiNotice";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 type Props = {
   cloth: { id: number; name: string; thumbUrl?: string };
@@ -149,7 +150,7 @@ export default function ClothCard({
       <Row>
         <Name numberOfLines={1}>{cloth.name}</Name>
         <MenuBtn
-          accessibilityLabel="Menu akcji"
+          accessibilityLabel={TranslationServiceInstance.t("Menu actions")}
           onPress={openActions}
           disabled={loading || selectionMode}
         >

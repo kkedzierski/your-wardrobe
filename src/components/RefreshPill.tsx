@@ -12,9 +12,11 @@ export default function RefreshPill({
   label = "Odśwież",
   onPress,
   disabled,
+  testID,
+  accessibilityLabel,
 }: Props) {
   return (
-    <Wrap>
+    <Wrap testID={testID} accessibilityLabel={accessibilityLabel}>
       <Btn
         accessibilityRole="button"
         accessibilityLabel={label}

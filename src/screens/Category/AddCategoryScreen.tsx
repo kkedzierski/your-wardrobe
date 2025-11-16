@@ -11,6 +11,7 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { showNoticeForApi } from "../../ui/apiNotice";
 import { postCreateCategory } from "../../api/Category/UI/REST/POST/CreateCategory/CreateCategoryController";
 import type { Category } from "../../api/Category/Domain/Category";
+import { TranslationServiceInstance } from "../../i18n/TranslationService";
 
 type AddCategoryParams = {
   returnTo?: "CategoryManager";
@@ -77,14 +78,16 @@ export default function AddCategoryScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Nazwa kategorii</Text>
+      <Text style={styles.label}>
+        {TranslationServiceInstance.t("Category name")}
+      </Text>
       <TextInput
-        placeholder="np. Koszulki"
+        placeholder={TranslationServiceInstance.t("e.g. T-shirts")}
         value={name}
         onChangeText={setName}
         style={styles.input}
         autoFocus
-        accessibilityLabel="Pole nazwy kategorii"
+        accessibilityLabel={TranslationServiceInstance.t("Category name input")}
       />
       <Pressable
         style={[styles.saveBtn, saving && { opacity: 0.6 }]}

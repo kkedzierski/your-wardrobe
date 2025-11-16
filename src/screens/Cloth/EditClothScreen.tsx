@@ -255,10 +255,12 @@ export default function EditClothScreen() {
               backgroundColor: "#fff",
             },
           ]}
-          accessibilityLabel="Wybierz kategorię"
+          accessibilityLabel={TranslationServiceInstance.t("Select category")}
         >
           <Text style={{ color: category ? "#111" : "#666" }}>
-            {category ? category.name : "Wybierz lub dodaj…"}
+            {category
+              ? category.name
+              : TranslationServiceInstance.t("Select or add category")}
           </Text>
           <Text style={{ color: "#999" }}>▾</Text>
         </Pressable>
@@ -293,7 +295,9 @@ export default function EditClothScreen() {
                 </View>
               ))
             ) : (
-              <Text style={{ color: "#666" }}>Wybierz lub dodaj…</Text>
+              <Text style={{ color: "#666" }}>
+                {TranslationServiceInstance.t("Select or add tags")}
+              </Text>
             )}
           </View>
           <Text style={{ color: "#999", marginLeft: 6 }}>▾</Text>

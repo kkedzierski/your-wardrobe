@@ -1,24 +1,17 @@
 // src/components/AnimatedButton.tsx
 import React from "react";
 import styled from "styled-components/native";
-import { MotiPressable } from "moti/interactions";
+import { Pressable } from "react-native";
 
-type Props = React.ComponentProps<typeof MotiPressable> & { label: string };
+type Props = React.ComponentProps<typeof Pressable> & { label: string };
 
 export default function AnimatedButton({ label, ...rest }: Props) {
   return (
-    <MotiPressable
-      {...rest}
-      animate={({ pressed }) => {
-        "worklet";
-        return { scale: pressed ? 0.97 : 1 };
-      }}
-      transition={{ type: "timing", duration: 120 }}
-    >
+    <Pressable {...rest}>
       <BtnContainer>
         <BtnText>{label}</BtnText>
       </BtnContainer>
-    </MotiPressable>
+    </Pressable>
   );
 }
 

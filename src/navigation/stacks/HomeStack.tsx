@@ -20,7 +20,11 @@ export default function HomeStack() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: TranslationServiceInstance.t("Home") }}
+        options={{
+          title: TranslationServiceInstance.t("Home"),
+          testID: "HomeTab",
+          tabBarAccessibilityLabel: TranslationServiceInstance.t("Home tab"),
+        }}
       />
       <Stack.Screen
         name="HomeDetails"

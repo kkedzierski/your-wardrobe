@@ -1,0 +1,44 @@
+appId: com.twojafirma.yourwardrobe
+---
+- launchApp
+
+# Tymczasowo:
+- tapOn:
+    point: 92%,92%
+
+- assertVisible:
+    id: "WelcomeScreen"
+
+- tapOn:
+    id: WelcomeStartButton
+- assertVisible:
+    id: "HomeScreen"
+
+- tapOn:
+    point: 50%,28%
+- tapOn:
+    id: com.android.camera2:id/shutter_button
+- tapOn:
+    id: com.android.camera2:id/done_button
+- assertVisible:
+    id: android:id/button1
+- tapOn:
+    id: android:id/button1
+- assertVisible: Nowe ubranie
+- tapOn: Nowe ubranie
+- eraseText
+- inputText: name
+- tapOn: e.g. Everyday tee
+- inputText: description
+- tapOn: e.g. navy
+- inputText: color
+- tapOn: e.g. Acme
+- inputText: brand
+- tapOn: e.g. Wardrobe B
+- inputText: location
+- tapOn: Save
+- assertVisible:
+    id: android:id/button1
+- tapOn:
+    id: android:id/button1
+- assertVisible: Ubranie name

@@ -6,7 +6,10 @@ import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 export default function HomeScreen() {
   return (
-    <Container accessibilityLabel="Widok Startowy">
+    <Container
+      testID="HomeScreen"
+      accessibilityLabel={TranslationServiceInstance.t("Home screen")}
+    >
       <Title>{TranslationServiceInstance.t("Your wardrobe")}</Title>
       <Subtitle>
         {TranslationServiceInstance.t(
@@ -14,7 +17,12 @@ export default function HomeScreen() {
         )}
       </Subtitle>
 
-      <AddClothFromCameraButton />
+      <AddClothFromCameraButton
+        testID="AddClothFromCameraButton"
+        accessibilityLabel={TranslationServiceInstance.t(
+          "Add clothing to wardrobe button"
+        )}
+      />
 
       <BelowHint>
         {TranslationServiceInstance.t(

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { WardrobeFilter } from "../api/Cloth/Ui/REST/GET/GetClothesCollection/ClothesFilters";
+import { TranslationServiceInstance } from "../i18n/TranslationService";
 
 type Props = {
   visible: boolean;
@@ -84,7 +85,7 @@ const WardrobeFiltersModal: React.FC<Props> = ({
         >
           <Sheet>
             <Header>
-              <Title>Filtry</Title>
+              <Title>{TranslationServiceInstance.t("Filters")}</Title>
               <CloseButton onPress={onClose}>
                 <CloseText>✕</CloseText>
               </CloseButton>
@@ -92,54 +93,58 @@ const WardrobeFiltersModal: React.FC<Props> = ({
 
             <Content>
               <Field>
-                <Label>Opis</Label>
+                <Label>{TranslationServiceInstance.t("Description")}</Label>
                 <Input
-                  placeholder="np. koszulka, sukienka…"
+                  placeholder={TranslationServiceInstance.t(
+                    "e.g. T-shirt, dress…"
+                  )}
                   value={description}
                   onChangeText={setDescription}
                 />
               </Field>
 
               <Field>
-                <Label>Marka</Label>
+                <Label>{TranslationServiceInstance.t("Brand")}</Label>
                 <Input
-                  placeholder="np. Nike"
+                  placeholder={TranslationServiceInstance.t("e.g. Nike")}
                   value={brand}
                   onChangeText={setBrand}
                 />
               </Field>
 
               <Field>
-                <Label>Kolor</Label>
+                <Label>{TranslationServiceInstance.t("Color")}</Label>
                 <Input
-                  placeholder="np. czarny"
+                  placeholder={TranslationServiceInstance.t("e.g. Black")}
                   value={color}
                   onChangeText={setColor}
                 />
               </Field>
 
               <Field>
-                <Label>Sezon</Label>
+                <Label>{TranslationServiceInstance.t("Season")}</Label>
                 <Input
-                  placeholder="np. lato, zima…"
+                  placeholder={TranslationServiceInstance.t(
+                    "e.g. Summer, Winter…"
+                  )}
                   value={season}
                   onChangeText={setSeason}
                 />
               </Field>
 
               <Field>
-                <Label>Lokalizacja</Label>
+                <Label>{TranslationServiceInstance.t("Location")}</Label>
                 <Input
-                  placeholder="np. Szafa B"
+                  placeholder={TranslationServiceInstance.t("e.g. Wardrobe B")}
                   value={location}
                   onChangeText={setLocation}
                 />
               </Field>
 
               <Field>
-                <Label>Kategoria</Label>
+                <Label>{TranslationServiceInstance.t("Category")}</Label>
                 <Input
-                  placeholder="np. Koszulki"
+                  placeholder={TranslationServiceInstance.t("e.g. T-shirts")}
                   value={categoryName}
                   onChangeText={setCategoryName}
                 />
@@ -150,11 +155,15 @@ const WardrobeFiltersModal: React.FC<Props> = ({
 
             <Footer>
               <SecondaryButton onPress={handleClear}>
-                <SecondaryButtonText>Wyczyść</SecondaryButtonText>
+                <SecondaryButtonText>
+                  {TranslationServiceInstance.t("Clear")}
+                </SecondaryButtonText>
               </SecondaryButton>
 
               <PrimaryButton onPress={handleApply}>
-                <PrimaryButtonText>Zastosuj</PrimaryButtonText>
+                <PrimaryButtonText>
+                  {TranslationServiceInstance.t("Apply")}
+                </PrimaryButtonText>
               </PrimaryButton>
             </Footer>
           </Sheet>

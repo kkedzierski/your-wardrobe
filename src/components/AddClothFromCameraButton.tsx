@@ -7,7 +7,13 @@ import { postCreateFromPhoto } from "../api/Cloth/Ui/REST/POST/CreateFromPhoto/C
 import { showNoticeForApi } from "../ui/apiNotice";
 import { TranslationServiceInstance } from "../i18n/TranslationService";
 
-export default function AddClothFromCameraButton() {
+export default function AddClothFromCameraButton({
+  testID,
+  accessibilityLabel,
+}: {
+  testID: string;
+  accessibilityLabel: string;
+}) {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<any>();
 
@@ -46,12 +52,13 @@ export default function AddClothFromCameraButton() {
     <CardWrapper
       style={{ minHeight: halfHeight }}
       accessible
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       accessibilityHint={TranslationServiceInstance.t(
         "Open the camera and add a photo of clothing to the wardrobe"
       )}
       accessibilityState={{ disabled: loading, busy: loading }}
-      testID="add-from-camera"
+      testID={testID}
     >
       <Pressable
         onPress={onPress}

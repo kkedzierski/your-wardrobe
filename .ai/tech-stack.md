@@ -13,7 +13,7 @@ Backend – offline-first (MVP), opcjonalny sync po MVP:
 • Eksport/Import (backup v1) → plik ZIP (JSON metadanych + miniatury) przez systemowy „Udostępnij”
 • Po MVP (opcjonalnie): Supabase (Auth + Postgres + Storage) do kont/logowania i ręcznego „Backup teraz”
 
-AI – „AI-lite” jako dodatek (opcjonalne w MVP):
+AI – „AI-lite” jako dodatek (po MVP):
 • Podpowiedzi kategorii/tagów z tekstu przez dostawcę LLM (np. OpenRouter/OpenAI); przełącznik „nie wysyłaj obrazów”
 • Abstrakcja AiProvider → łatwo włączyć/wyłączyć lub podmienić model
 
@@ -29,6 +29,8 @@ Spełnienie wymagań:
 • CRUD → expo-sqlite + repo/metody (lista, dodaj, edytuj, usuń, filtry)
 • Logika biznesowa → słowniki kategorii/kolorów/sezonów, filtry/sort
 • PRD & dokumenty → katalog docs/ w repo (PRD, SystemDesign, Privacy, TestPlan, Roadmap)
-• Testy → min. jeden test z perspektywy użytkownika (dodanie elementu → widoczny na liście)
+• Testy:
+◦ Jednostkowe & integracyjne: Jest + @testing-library/react-native (testy komponentów/hooków), jest-expo, ts-jest (TypeScript), expo-jest-mocks (mocki Expo), msw/native (mock REST API)
+◦ E2E: Detox + expo-dev-client (testy end-to-end na Android/iOS – fizyczne urządzenia i emulatory), Maestro Cloud (skrypty CTA), opcjonalnie @expo/e2e
 • CI/CD → GitHub Actions (testy) + EAS Build/Update
 • ⭐ Opcjonalnie: publiczne wydanie (APK/TestFlight) i/lub strona pod publicznym URL
